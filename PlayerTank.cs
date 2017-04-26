@@ -19,7 +19,7 @@ namespace Tank1990
 
         public PlayerTank()
         {
-            Speed = 3;
+            Speed = 30;
             HitPoints = 3;
             direction = Direction.North;
             Length = Width = 60;
@@ -27,11 +27,9 @@ namespace Tank1990
         }
         public event UpdateViewDelegate UpdateView; // отрисовка
 
-        public void Move(Direction direction, IMap map) // перемещение танка
+        public void Move(IMap map) // перемещение танка
         {
-            this.direction = direction;
-
-            switch (this.direction)
+            switch (direction)
             {
                 case Direction.North:
                     TopLeftCorner = new Point(TopLeftCorner.X, TopLeftCorner.Y - Speed); 

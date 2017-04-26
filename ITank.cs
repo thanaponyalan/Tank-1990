@@ -4,10 +4,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Tank1990
 {
-    public delegate void UpdateViewDelegate(Graphics g, IMap map);
+    public delegate void UpdateViewDelegate(object sender, PaintEventArgs e);
 
     public interface ITank
     {
@@ -19,6 +20,6 @@ namespace Tank1990
         int Speed { get; set; } // скорость передвижения танка в пикселях/тик таймера 
         int HitPoints { get; set; } // количество жизней
         event UpdateViewDelegate UpdateView; // отрисовка
-        void Move(Direction direction, IMap map); // перемещение танка
+        void Move(IMap map); // перемещение танка
     }
 }

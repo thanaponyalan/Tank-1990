@@ -25,11 +25,20 @@ namespace Tank1990
         private Graphics graphics; // холст для фигур
         private PlayerTank playerTank; // танк пользователя
         private IMap currentMap; // текущая карта
+        private Dictionary<Keys, Direction> direction;
+
         public Tank1990()
         {
             InitializeComponent();
             playerTank = new PlayerTank();
+            playerTank.UpdateView += UpdateView;
             graphics = this.CreateGraphics();
+            direction = new Dictionary<Keys, Direction>();
+            direction.Add(Keys.Left, Direction.West);
+            direction.Add(Keys.Right, Direction.East);
+            direction.Add(Keys.Down, Direction.South);
+            direction.Add(Keys.Up, Direction.North);
+
         }
 
         public void UpdateView(object sender, PaintEventArgs e)
@@ -50,13 +59,25 @@ namespace Tank1990
             Pen pen = new Pen(Color.Black);
             pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
             pen.Width = 5;
-            buffer.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0, Color.White)), new Rectangle(playerTank.TopLeftCorner, new Size(playerTank.Width, playerTank.Length)));
-            buffer.Graphics.DrawRectangle(pen, new Rectangle(playerTank.TopLeftCorner, new Size(playerTank.Width, playerTank.Length)));
+            buffer.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, Color.Black)), new Rectangle(playerTank.TopLeftCorner, new Size(playerTank.Width, playerTank.Length)));
+            //buffer.Graphics.DrawRectangle(pen, new Rectangle(playerTank.TopLeftCorner, new Size(playerTank.Width, playerTank.Length)));
 
 
             // Renders the contents of the buffer to the specified drawing surface.
             buffer.Render(graphics);
             buffer.Dispose();
+        }
+
+        // отлавливает нажатую кнопку стрелки
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Left || keyData == Keys.Right ||
+                keyData == Keys.Up || keyData == Keys.Down)
+            {
+                if(playerTank.direction == direction[keyData]) playerTank.Move(currentMap);
+                else playerTank.direction = direction[keyData];
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }
