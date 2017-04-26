@@ -22,7 +22,7 @@ namespace Tank1990
             Speed = 3;
             HitPoints = 3;
             direction = Direction.North;
-            Length = Width = 40;
+            Length = Width = 60;
             TopLeftCorner = new Point(50,50);
         }
         public event UpdateViewDelegate UpdateView; // отрисовка
@@ -48,7 +48,7 @@ namespace Tank1990
             }
 
           
-            UpdateView();
+            UpdateView(null, null);
 
         }
     }

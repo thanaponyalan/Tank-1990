@@ -34,8 +34,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(575, 453);
+            this.ClientSize = new System.Drawing.Size(944, 680);
             this.Name = "Tank1990";
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.UpdateView);
             this.ResumeLayout(false);
 
         }

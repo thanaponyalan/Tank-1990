@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Tank1990
 {
     // пуля
-    class Bullet : IMoveElement
+    public class Bullet : IMoveElement
     {
     }
 }

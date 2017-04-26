@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tank1990
 {
-    interface IMap
+    public interface IMap
     {
         bool IsEmptyWay(IMoveElement element); // можно ли двигаться дальше
     }

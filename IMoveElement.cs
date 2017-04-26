@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tank1990
 {
-    interface IMoveElement
+    public interface IMoveElement
     {
     }
 }

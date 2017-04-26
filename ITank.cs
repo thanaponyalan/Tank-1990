@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Tank1990
 {
-    delegate void UpdateViewDelegate(Graphics g, IMap map);
+    public delegate void UpdateViewDelegate(Graphics g, IMap map);
 
-    interface ITank
+    public interface ITank
     {
         Direction direction { get; set; } // направление движения танка
         Point TopLeftCorner { get; set; } // координаты левого верхнего угла танка
