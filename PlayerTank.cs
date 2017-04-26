@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace Tank1990
 {
-    class PlayerTank : Tank, IMoveElement
+    public class PlayerTank : Tank
     {
         public PlayerTank()
         {
             Speed = 10;
             HitPoints = 3;
             direction = Direction.North;
-            Length = Width = 40;
-            TopLeftCorner = new Point(50, 50);
-            img = new Bitmap(Image.FromFile("../../TT34.png"), new Size(Width, Length));
-
+            Height = Width = 40;
+            point = new Point(50, 50);
+            Gun = new Point(point.X + Width / 2, point.Y);
+            img = new Bitmap(Image.FromFile("../../TT34.png"), new Size(Width, Height));
         }
 
         public event UpdateViewDelegate UpdateView; // отрисовка
@@ -32,34 +32,37 @@ namespace Tank1990
                     switch (direction)
                     {
                         case Direction.North:
-                            TopLeftCorner = new Point(TopLeftCorner.X, TopLeftCorner.Y - 1);
+                            point = new Point(point.X, point.Y - 1);
                             break;
                         case Direction.South:
-                            TopLeftCorner = new Point(TopLeftCorner.X, TopLeftCorner.Y + 1);
+                            point = new Point(point.X, point.Y + 1);
                             break;
                         case Direction.West:
-                            TopLeftCorner = new Point(TopLeftCorner.X - 1, TopLeftCorner.Y);
+                            point = new Point(point.X - 1, point.Y);
                             break;
                         case Direction.East:
-                            TopLeftCorner = new Point(TopLeftCorner.X + 1, TopLeftCorner.Y);
+                            point = new Point(point.X + 1, point.Y);
                             break;
                     }
+
+                    
                     UpdateView(null, null);
                 }
             }
 
-
             else
             {
-                RotateImage(direction, newDirection);
+                RotateImage(newDirection);
                 direction = newDirection;
                 UpdateView(null, null);
             }
+
+            SetGunCoordinates();
         }
 
-        private void RotateImage(Direction previous, Direction next) // поворачиваем картинку на нужный угол
+        private void RotateImage(Direction newDirection) // поворачиваем картинку на нужный угол
         {
-            int angle = windRose[next] - windRose[previous];
+            int angle = windRose[newDirection] - windRose[direction];
             angle = angle < 0 ? angle + 360 : angle;
 
             switch (angle)
@@ -72,6 +75,25 @@ namespace Tank1990
                     break;
                 case 90:
                     img.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                    break;
+            }
+        }
+
+        private void SetGunCoordinates() // устанавливаем координаты пушки
+        {
+            switch (direction)
+            {
+                case Direction.North:
+                    Gun = new Point(point.X + Width / 2, point.Y);
+                    break;
+                case Direction.South:
+                    Gun = new Point(point.X + Width / 2, point.Y + Height);
+                    break;
+                case Direction.West:
+                    Gun = new Point(point.X, point.Y + Height / 2);
+                    break;
+                case Direction.East:
+                    Gun = new Point(point.X + Width, point.Y + Height / 2);
                     break;
             }
         }

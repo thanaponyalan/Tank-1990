@@ -8,6 +8,6 @@ namespace Tank1990
 {
     public interface IMap
     {
-        bool IsEmptyWay(IMoveElement element); // можно ли двигаться дальше
+        bool IsEmptyWay(MoveElement element); // можно ли двигаться дальше
     }
 }

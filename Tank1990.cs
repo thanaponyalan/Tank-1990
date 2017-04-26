@@ -25,11 +25,11 @@ namespace Tank1990
 
     public partial class Tank1990 : Form
     {
-        private ImageList imagesForTanks;
-        private List<Bullet> bullets; // снаряды
+        private Bullet bullet = null; // снаряды
         private Graphics graphics; // холст для фигур
         private PlayerTank playerTank; // танк пользователя
         private IMap currentMap; // текущая карта
+        private Timer timer = new Timer();
         private Dictionary<Keys, Direction> direction; // пара клавиша(стрелка) - направление движ.
 
         public Tank1990()
@@ -38,15 +38,13 @@ namespace Tank1990
             playerTank = new PlayerTank();
             playerTank.UpdateView += UpdateView;
             graphics = this.CreateGraphics();
-            imagesForTanks = new ImageList();
-            imagesForTanks.ImageSize = new Size(40, 40);
-            imagesForTanks.Images.Add(Image.FromFile("../../TT34.png"));
             direction = new Dictionary<Keys, Direction>();
             direction.Add(Keys.Left, Direction.West);
             direction.Add(Keys.Right, Direction.East);
             direction.Add(Keys.Down, Direction.South);
             direction.Add(Keys.Up, Direction.North);
-
+            timer.Interval = 1;
+            timer.Tick += BulletTimer;
         }
 
         public void UpdateView(object sender, PaintEventArgs e)
@@ -61,8 +59,12 @@ namespace Tank1990
                this.DisplayRectangle);
             buffer.Graphics.Clear(Color.Black);
 
-            buffer.Graphics.DrawImage(playerTank.img, playerTank.TopLeftCorner);
-            
+
+            if(bullet != null)buffer.Graphics.DrawImage(bullet.img, bullet.point);
+
+
+            buffer.Graphics.DrawImage(playerTank.img, playerTank.point);
+
             // Renders the contents of the buffer to the specified drawing surface.
             buffer.Render(graphics);
             buffer.Dispose();
@@ -78,6 +80,31 @@ namespace Tank1990
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void Tank1990_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.X || e.KeyCode == Keys.Z)
+            {
+                bullet = new Bullet(playerTank);
+                bullet.UpdateView += UpdateView;
+                timer.Tick += BulletTimer;
+                timer.Stop();
+               
+                UpdateView(null, null);
+                timer.Start();
+            }
+        }
+
+        private void BulletTimer(object sender, EventArgs e)
+        {
+            bullet.Move(Direction.North, currentMap);
+
+        }
+
+        private void Tank1990_MouseMove(object sender, MouseEventArgs e)
+        {
+            Text = "X: " + e.X + " Y: " + e.Y;
         }
     }
 }

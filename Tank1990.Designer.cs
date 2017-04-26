@@ -41,6 +41,8 @@
             this.Name = "Tank1990";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.UpdateView);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Tank1990_KeyDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Tank1990_MouseMove);
             this.ResumeLayout(false);
 
         }

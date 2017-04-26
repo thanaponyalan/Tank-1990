@@ -49,7 +49,7 @@
   <ItemGroup>
     <Compile Include="Bullet.cs" />
     <Compile Include="IMap.cs" />
-    <Compile Include="IMoveElement.cs" />
+    <Compile Include="MoveElement.cs" />
     <Compile Include="Tank.cs" />
     <Compile Include="PlayerTank.cs" />
     <Compile Include="Tank1990.cs">

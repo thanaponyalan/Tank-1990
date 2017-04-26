@@ -8,22 +8,10 @@ using System.Windows.Forms;
 
 namespace Tank1990
 {
-
-
-    public delegate void UpdateViewDelegate(object sender, PaintEventArgs e);
-
-    public abstract class Tank
+    public abstract class Tank : MoveElement
     {
-        public Bitmap img;
-        public Direction direction { get; set; } // направление движения танка
-        public Point TopLeftCorner { get; set; } // координаты левого верхнего угла танка
-        public int Width { get; set; } // ширина танка
-        public int Length { get; set; } // длина танка
         public Point Gun { get; set; } // координаты пушки танка
-        public int Speed { get; set; } // скорость передвижения танка в пикселях
         public int HitPoints { get; set; } // количество жизней
-        
-        public abstract void Move(Direction newDirection, IMap map); // перемещение танка
         public Dictionary<Direction, int> windRose = new Dictionary<Direction, int>(); // роза ветров
 
         public Tank()
