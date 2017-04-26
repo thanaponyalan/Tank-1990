@@ -37,7 +37,6 @@
             this.ClientSize = new System.Drawing.Size(944, 680);
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "Tank1990";
             this.TopMost = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;

@@ -18,14 +18,19 @@ namespace Tank1990
         East
     }
 
+    public enum Tanks
+    {
+        TT34,
+    }
+
     public partial class Tank1990 : Form
     {
-
-        public List<Bullet> bullets; // снаряды
+        private ImageList imagesForTanks;
+        private List<Bullet> bullets; // снаряды
         private Graphics graphics; // холст для фигур
         private PlayerTank playerTank; // танк пользователя
         private IMap currentMap; // текущая карта
-        private Dictionary<Keys, Direction> direction;
+        private Dictionary<Keys, Direction> direction; // пара клавиша(стрелка) - направление движ.
 
         public Tank1990()
         {
@@ -33,6 +38,9 @@ namespace Tank1990
             playerTank = new PlayerTank();
             playerTank.UpdateView += UpdateView;
             graphics = this.CreateGraphics();
+            imagesForTanks = new ImageList();
+            imagesForTanks.ImageSize = new Size(40, 40);
+            imagesForTanks.Images.Add(Image.FromFile("../../TT34.png"));
             direction = new Dictionary<Keys, Direction>();
             direction.Add(Keys.Left, Direction.West);
             direction.Add(Keys.Right, Direction.East);
@@ -51,18 +59,10 @@ namespace Tank1990
             // dimensions the same size as the drawing surface of Form1.
             buffer = currentContext.Allocate(this.CreateGraphics(),
                this.DisplayRectangle);
-            buffer.Graphics.Clear(SystemColors.Control);
+            buffer.Graphics.Clear(Color.Black);
 
-            // рисуем все фигуры
-
-
-            Pen pen = new Pen(Color.Black);
-            pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-            pen.Width = 5;
-            buffer.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, Color.Black)), new Rectangle(playerTank.TopLeftCorner, new Size(playerTank.Width, playerTank.Length)));
-            //buffer.Graphics.DrawRectangle(pen, new Rectangle(playerTank.TopLeftCorner, new Size(playerTank.Width, playerTank.Length)));
-
-
+            buffer.Graphics.DrawImage(playerTank.img, playerTank.TopLeftCorner);
+            
             // Renders the contents of the buffer to the specified drawing surface.
             buffer.Render(graphics);
             buffer.Dispose();
@@ -74,9 +74,9 @@ namespace Tank1990
             if (keyData == Keys.Left || keyData == Keys.Right ||
                 keyData == Keys.Up || keyData == Keys.Down)
             {
-                if(playerTank.direction == direction[keyData]) playerTank.Move(currentMap);
-                else playerTank.direction = direction[keyData];
+                playerTank.Move(direction[keyData], currentMap);
             }
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
     }
