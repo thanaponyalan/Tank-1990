@@ -20,8 +20,8 @@ namespace Tank1990
 
     public partial class Tank1990 : Form
     {
-        
 
+        public List<Bullet> bullets; // снаряды
         public Tank1990()
         {
             InitializeComponent();

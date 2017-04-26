@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Tank1990
 {
-    class PlayerTank : ITank
+    class PlayerTank : ITank, IMoveElement
     {
         public Direction direction { get; set; }
         public Point Gun { get; set; }
@@ -47,6 +47,7 @@ namespace Tank1990
                     break;
             }
 
+          
             UpdateView();
 
         }

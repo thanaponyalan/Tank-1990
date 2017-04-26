@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Tank1990
 {
-    interface IMap
+    // пуля
+    class Bullet : IMoveElement
     {
-        bool IsEmptyWay(IMoveElement element); // можно ли двигаться дальше
     }
 }
