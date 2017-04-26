@@ -11,7 +11,7 @@ namespace Tank1990
     {
         public PlayerTank()
         {
-            Speed = 20;
+            Speed = 10;
             HitPoints = 3;
             direction = Direction.North;
             Length = Width = 40;
@@ -24,32 +24,37 @@ namespace Tank1990
 
         public override void Move(Direction newDirection, IMap map) // перемещение танка
         {
+
             if (direction == newDirection)
             {
-                switch (direction)
+                for (int i = 0; i < Speed; ++i)
                 {
-                    case Direction.North:
-                        TopLeftCorner = new Point(TopLeftCorner.X, TopLeftCorner.Y - Speed);
-                        break;
-                    case Direction.South:
-                        TopLeftCorner = new Point(TopLeftCorner.X, TopLeftCorner.Y + Speed);
-                        break;
-                    case Direction.West:
-                        TopLeftCorner = new Point(TopLeftCorner.X - Speed, TopLeftCorner.Y);
-                        break;
-                    case Direction.East:
-                        TopLeftCorner = new Point(TopLeftCorner.X + Speed, TopLeftCorner.Y);
-                        break;
+                    switch (direction)
+                    {
+                        case Direction.North:
+                            TopLeftCorner = new Point(TopLeftCorner.X, TopLeftCorner.Y - 1);
+                            break;
+                        case Direction.South:
+                            TopLeftCorner = new Point(TopLeftCorner.X, TopLeftCorner.Y + 1);
+                            break;
+                        case Direction.West:
+                            TopLeftCorner = new Point(TopLeftCorner.X - 1, TopLeftCorner.Y);
+                            break;
+                        case Direction.East:
+                            TopLeftCorner = new Point(TopLeftCorner.X + 1, TopLeftCorner.Y);
+                            break;
+                    }
+                    UpdateView(null, null);
                 }
             }
+
 
             else
             {
                 RotateImage(direction, newDirection);
                 direction = newDirection;
+                UpdateView(null, null);
             }
-
-            UpdateView(null, null);
         }
 
         private void RotateImage(Direction previous, Direction next) // поворачиваем картинку на нужный угол
@@ -69,7 +74,6 @@ namespace Tank1990
                     img.RotateFlip(RotateFlipType.Rotate90FlipNone);
                     break;
             }
-
         }
     }
 }
