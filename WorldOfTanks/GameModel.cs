@@ -25,7 +25,14 @@ namespace WorldOfTanks
 
             if (tank.direction == direction)
             {
-                tank.point = new Point((int)(tank.point.X + dX), (int)(tank.point.Y + dY));
+                Point newPoint = new Point((tank.point.X + dX), (tank.point.Y + dY));
+                Rectangle rect = new Rectangle(newPoint, new Size(tank.size, tank.size));
+
+
+                if(rect.Left >= 100 && rect.Right <= 1000 && rect.Top >= 100 && rect.Bottom <= 1000)
+                {
+                    tank.point = newPoint;
+                }
             }
 
             else
@@ -39,8 +46,13 @@ namespace WorldOfTanks
         {
             if (!tank.isShooting)
             {
-                bullets.Add(new Bullet(tank));
-                tank.isShooting = true;
+                Bullet bullet = new Bullet(tank);
+                if (bullet.middle.X > 100 && bullet.middle.Y > 100 &&
+                    bullet.middle.X < 1000 && bullet.middle.Y < 1000)
+                {
+                    bullets.Add(new Bullet(tank));
+                    tank.isShooting = true;
+                }
             }
         }
 

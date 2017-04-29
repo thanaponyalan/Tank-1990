@@ -30,14 +30,14 @@ namespace WorldOfTanks
                     break;
                 case Direction.South:
                     middle = new Point(tank.point.X + tank.size / 2, tank.point.Y + tank.size);
-                    point = new Point(tank.point.X + tank.size / 2 - size / 2, tank.point.Y + tank.size + size/2);
+                    point = new Point(tank.point.X + tank.size / 2 - size / 2, tank.point.Y + tank.size - size/2);
                     break;
                 case Direction.East:
                     middle = new Point(tank.point.X + tank.size, tank.point.Y + tank.size / 2);
                     point = new Point(tank.point.X + tank.size - size/2, tank.point.Y + tank.size/2 - size/2);
                     break;
                 case Direction.West:
-                    middle = new Point(tank.point.X - size /2, tank.point.Y);
+                    middle = new Point(tank.point.X, tank.point.Y + tank.size/2);
                     point = new Point(tank.point.X - size / 2, tank.point.Y + tank.size / 2 - size / 2);
                     break;
             }
