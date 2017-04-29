@@ -72,11 +72,19 @@ namespace WorldOfTanks
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Left) left = true;
-            else if (e.KeyCode == Keys.Right) right = true;
-            else if (e.KeyCode == Keys.Up) up = true;
-            else if (e.KeyCode == Keys.Down) down = true;
+            if (e.KeyCode == Keys.Left) { StopMove(); left = true; }
+            if (e.KeyCode == Keys.Right) { StopMove(); right = true; }
+            if (e.KeyCode == Keys.Up) { StopMove(); up = true; }
+            if (e.KeyCode == Keys.Down) { StopMove(); down = true; }
             if (e.KeyCode == Keys.Z || e.KeyCode == Keys.X) shoot = true;
+        }
+
+        private void StopMove()
+        {
+            left = false;
+            right = false;
+            up = false;
+            down = false;
         }
 
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
@@ -85,7 +93,7 @@ namespace WorldOfTanks
             else if (e.KeyCode == Keys.Right) right = false;
             else if (e.KeyCode == Keys.Up) up = false;
             else if (e.KeyCode == Keys.Down) down = false;
-            else if (e.KeyCode == Keys.Z || e.KeyCode == Keys.X) shoot = false;
+            if (e.KeyCode == Keys.Z || e.KeyCode == Keys.X) shoot = false;
         }
     }
 }
