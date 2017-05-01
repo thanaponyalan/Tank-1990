@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace WorldOfTanks
 {
@@ -13,9 +14,14 @@ namespace WorldOfTanks
         public Tank player = new PlayerTank();
         public List<Bullet> bullets = new List<Bullet>();
         public List<Tank> bot;
+        private Point startPosition;
+        public Map currentMap;
 
         public GameModel()
-        { }
+        {
+            currentMap = new Stage1(player);
+
+        }
 
 
         public void Move(Tank tank, Direction direction) // перемещение танка пользователя
@@ -27,12 +33,12 @@ namespace WorldOfTanks
             {
                 Point newPoint = new Point((tank.point.X + dX), (tank.point.Y + dY));
                 Rectangle rect = new Rectangle(newPoint, new Size(tank.size, tank.size));
+                tank.point = newPoint;
 
-
-                if(rect.Left >= 100 && rect.Right <= 1000 && rect.Top >= 100 && rect.Bottom <= 1000)
-                {
-                    tank.point = newPoint;
-                }
+                //if (rect.Left >= 100 && rect.Right <= 1000 && rect.Top >= 100 && rect.Bottom <= 1000)
+                //{
+                //    tank.point = newPoint;
+                //}
             }
 
             else
@@ -47,12 +53,14 @@ namespace WorldOfTanks
             if (!tank.isShooting)
             {
                 Bullet bullet = new Bullet(tank);
-                if (bullet.middle.X > 100 && bullet.middle.Y > 100 &&
-                    bullet.middle.X < 1000 && bullet.middle.Y < 1000)
-                {
-                    bullets.Add(new Bullet(tank));
-                    tank.isShooting = true;
-                }
+                bullets.Add(new Bullet(tank));
+                tank.isShooting = true;
+                //if (bullet.middle.X > 100 && bullet.middle.Y > 100 &&
+                //    bullet.middle.X < 1000 && bullet.middle.Y < 1000)
+                //{
+                //    bullets.Add(new Bullet(tank));
+                //    tank.isShooting = true;
+                //}
             }
         }
 
@@ -60,7 +68,7 @@ namespace WorldOfTanks
         {
             List<int> index = new List<int>();
             int i = 0;
-            foreach(var bullet in bullets)
+            foreach (var bullet in bullets)
             {
                 int dX = bullet.shift[bullet.direction].Key; // смещение по x
                 int dY = bullet.shift[bullet.direction].Value; // смещение по y
@@ -81,6 +89,9 @@ namespace WorldOfTanks
                 bullets.RemoveAt(j);
             }
         }
+
+       
+
 
         private static void RotateImage(Tank tank, Direction newDirection) // поворачиваем картинку на нужный угол
         {

@@ -59,12 +59,27 @@ namespace WorldOfTanks
 
         private void MainForm_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.Clear(Color.White);
-            e.Graphics.FillRectangle(new SolidBrush(Color.Black), new RectangleF(new Point(100, 100), new Size(900, 900)));
-            //e.Graphics.FillRectangle(new SolidBrush(Color.White), new Rectangle(new Point(game.player.point.X, game.player.point.Y), new Size(40, 40)));
-            e.Graphics.DrawImage(game.player.img, new Point(game.player.point.X, game.player.point.Y));
+            e.Graphics.Clear(Color.Gray);
+            e.Graphics.FillRectangle(new SolidBrush(Color.Black), game.currentMap.mainFrame); // отрисовка основной рамки
+            e.Graphics.DrawImage(game.player.img, new Point(game.player.point.X, game.player.point.Y)); // отрисовка танка
+            e.Graphics.DrawImage(game.currentMap.eagle, game.currentMap.pointEagle); // отрисовка орла
 
-            foreach(var b in game.bullets)
+            foreach (var s in game.currentMap.stone)
+            {
+                e.Graphics.DrawImage(game.currentMap.imgStone, s);
+            }
+
+            foreach (var f in game.currentMap.forest) 
+            {
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(110, 0, 255, 111)), new Rectangle(f, new Size(60, 60)));
+            }
+
+            foreach (var b in game.currentMap.brick)
+            {
+                e.Graphics.DrawImage(game.currentMap.imgBrick, b);
+            }
+
+            foreach (var b in game.bullets) // отрисовка пуль
             {
                 e.Graphics.FillEllipse(new SolidBrush(Color.DarkOrange), new RectangleF(b.point, new Size(b.size, b.size)));
             }
@@ -94,6 +109,11 @@ namespace WorldOfTanks
             else if (e.KeyCode == Keys.Up) up = false;
             else if (e.KeyCode == Keys.Down) down = false;
             if (e.KeyCode == Keys.Z || e.KeyCode == Keys.X) shoot = false;
+        }
+
+        private void MainForm_MouseMove(object sender, MouseEventArgs e)
+        {
+            Text = "X: " + e.X + "Y: " + e.Y;
         }
     }
 }
