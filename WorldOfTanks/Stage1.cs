@@ -9,20 +9,19 @@ namespace WorldOfTanks
 {
     public class Stage1 : Map
     {
-        
+
 
         public Stage1(Tank player)
-            :base(player)
+            : base(player)
         {
-            int size = player.size;
             int x = mainFrame.X;
             int y = mainFrame.Y;
-            InitializeStone(x,y,size);
-            InitializeBrick(x, y, size);
-            InitializeForest(x, y, size);
+            InitializeStone(x, y);
+            InitializeBrick(x, y);
+            InitializeForest(x, y);
         }
 
-        private void InitializeForest(int x, int y, int size)
+        private void InitializeForest(int x, int y)
         {
             forest.Add(new Point(x, y + size * 12));
             forest.Add(new Point(x + size, y + size * 12));
@@ -40,7 +39,7 @@ namespace WorldOfTanks
             forest.Add(new Point(x + size * 12, y + size * 8));
         }
 
-        private void InitializeBrick(int x, int y, int size)
+        private void InitializeBrick(int x, int y)
         {
             brick.Add(new Point(x + size * 3, y + size));
             brick.Add(new Point(x + size * 5, y + size));
@@ -94,7 +93,7 @@ namespace WorldOfTanks
             brick.Add(new Point(x + size * 5, y + size * 9));
         }
 
-        private void InitializeStone(int x, int y, int size)
+        private void InitializeStone(int x, int y)
         {
             stone.Add(new Point(x, y + size * 7));
             stone.Add(new Point(x + 12 * size, y + size * 7));

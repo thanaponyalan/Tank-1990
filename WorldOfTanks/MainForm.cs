@@ -28,6 +28,7 @@ namespace WorldOfTanks
         private GameModel game;
         private Timer updateViewTimer = new Timer();
         private Timer bulletsTimer = new Timer();
+        private Timer shootTimer = new Timer();
 
         public MainForm()
         {
@@ -37,8 +38,16 @@ namespace WorldOfTanks
             updateViewTimer.Tick += UpdateViewTimer_Tick;
             updateViewTimer.Start();
             bulletsTimer.Interval = 1; // fps
-            bulletsTimer.Tick += BulletsTimer_Tick; ;
+            bulletsTimer.Tick += BulletsTimer_Tick; 
             bulletsTimer.Start();
+            shootTimer.Interval = 150;
+            shootTimer.Tick += ShootTimer_Tick;
+            shootTimer.Start();
+    }
+
+        private void ShootTimer_Tick(object sender, EventArgs e)
+        {
+            if (shoot) game.Shoot(game.player);
         }
 
         private void BulletsTimer_Tick(object sender, EventArgs e)
@@ -52,7 +61,7 @@ namespace WorldOfTanks
             else if (right) game.Move(game.player, Direction.East);
             else if (up) game.Move(game.player, Direction.North);
             else if (down) game.Move(game.player, Direction.South);
-            if (shoot) game.Shoot(game.player);
+           
             Invalidate();
             Update();
         }
@@ -81,7 +90,7 @@ namespace WorldOfTanks
 
             foreach (var b in game.bullets) // отрисовка пуль
             {
-                e.Graphics.FillEllipse(new SolidBrush(Color.DarkOrange), new RectangleF(b.point, new Size(b.size, b.size)));
+                e.Graphics.FillEllipse(new SolidBrush(Color.Aquamarine), new RectangleF(b.point, new Size(b.size, b.size)));
             }
         }
 

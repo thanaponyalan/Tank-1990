@@ -11,7 +11,7 @@ namespace WorldOfTanks
     {
         public int size = 10; // размер прямоугольника в который будет вписана пуля
         public Direction direction; // направление 
-        public int Speed = 10; // скорость в пикселях за одну милисекунду
+        public int Speed = 8; // скорость в пикселях за одну милисекунду
         public Point point; // левая верхняя точка прямоугольника
         public Point middle; // центр окружности/пули
         public Tank tank; // танк, который выпустил пулю

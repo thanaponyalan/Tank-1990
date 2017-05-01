@@ -10,6 +10,7 @@ namespace WorldOfTanks
 {
     public abstract class Map
     {
+        public int size = 60; // размер текстур
         public Rectangle mainFrame; // основная рамка игрового поля
         public Point startPosition; // стартовая позиция танка пользователя
         public Bitmap eagle = new Bitmap(Image.FromFile("../../eagle.png"), new Size(60, 60));
@@ -22,12 +23,12 @@ namespace WorldOfTanks
 
         public Map(Tank player)
         { 
-            int x = (SystemInformation.VirtualScreen.Width - 13 * player.size) / 2;
-            int y = (SystemInformation.VirtualScreen.Height - 13 * player.size) / 2;
-            mainFrame = new Rectangle(new Point(x, y), new Size(player.size * 13, player.size * 13));
-            startPosition = new Point(mainFrame.X + 4 * player.size, mainFrame.Y + 12 * player.size);
+            int x = (SystemInformation.VirtualScreen.Width - 13 * size) / 2;
+            int y = (SystemInformation.VirtualScreen.Height - 13 * size) / 2;
+            mainFrame = new Rectangle(new Point(x, y), new Size(size * 13, size * 13));
+            startPosition = new Point(mainFrame.X + 4 * size, mainFrame.Y + 12 * size);
             player.point = startPosition;
-            pointEagle = new Point(mainFrame.X + 6 * player.size, mainFrame.Y + 12 * player.size);
+            pointEagle = new Point(mainFrame.X + 6 * size, mainFrame.Y + 12 * size);
         }
     }
 }

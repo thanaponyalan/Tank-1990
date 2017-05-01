@@ -11,7 +11,7 @@ namespace WorldOfTanks
     {
         public PlayerTank()
         {
-            size = 60; // размеры танка
+            size = 40; // размеры танка
             direction = Direction.North;
             hitpoints = 3;
             img = new Bitmap(Image.FromFile("../../TT34.png"), new Size(size, size));

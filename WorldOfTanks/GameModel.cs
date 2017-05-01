@@ -20,6 +20,7 @@ namespace WorldOfTanks
         public GameModel()
         {
             currentMap = new Stage1(player);
+            startPosition = currentMap.startPosition;
 
         }
 
@@ -33,12 +34,11 @@ namespace WorldOfTanks
             {
                 Point newPoint = new Point((tank.point.X + dX), (tank.point.Y + dY));
                 Rectangle rect = new Rectangle(newPoint, new Size(tank.size, tank.size));
-                tank.point = newPoint;
 
-                //if (rect.Left >= 100 && rect.Right <= 1000 && rect.Top >= 100 && rect.Bottom <= 1000)
-                //{
-                //    tank.point = newPoint;
-                //}
+                if (TankCanMove(rect))
+                {
+                    tank.point = newPoint;
+                }
             }
 
             else
@@ -55,12 +55,6 @@ namespace WorldOfTanks
                 Bullet bullet = new Bullet(tank);
                 bullets.Add(new Bullet(tank));
                 tank.isShooting = true;
-                //if (bullet.middle.X > 100 && bullet.middle.Y > 100 &&
-                //    bullet.middle.X < 1000 && bullet.middle.Y < 1000)
-                //{
-                //    bullets.Add(new Bullet(tank));
-                //    tank.isShooting = true;
-                //}
             }
         }
 
@@ -75,8 +69,7 @@ namespace WorldOfTanks
                 bullet.middle = new Point(bullet.middle.X + dX, bullet.middle.Y + dY);
                 bullet.point = new Point(bullet.point.X + dX, bullet.point.Y + dY);
 
-                if (bullet.middle.X <= 100 || bullet.middle.X >= 1000 ||
-                    bullet.middle.Y <= 100 || bullet.middle.Y >= 1000)
+                if (!BulletCanMove(bullet.middle))
                 {
                     bullet.tank.isShooting = false;
                     index.Add(i);
@@ -90,7 +83,61 @@ namespace WorldOfTanks
             }
         }
 
-       
+        private bool TankCanMove(Rectangle tank) // проверяет, может ли танк двигаться в данном направлении
+        {
+            if (tank.Left < currentMap.mainFrame.Left || tank.Right > currentMap.mainFrame.Right
+                || tank.Top < currentMap.mainFrame.Top || tank.Bottom > currentMap.mainFrame.Bottom)
+            {
+                return false;
+            }
+
+            foreach (var s in currentMap.stone)
+            {
+                Rectangle rect = new Rectangle(s, new Size(currentMap.size, currentMap.size));
+                if (rect.IntersectsWith(tank)) return false;
+            }
+
+            foreach (var b in currentMap.brick)
+            {
+                Rectangle rect = new Rectangle(b, new Size(currentMap.size, currentMap.size));
+                if (rect.IntersectsWith(tank)) return false;
+            }
+
+            Rectangle eagle = new Rectangle(currentMap.pointEagle, new Size(currentMap.size, currentMap.size));
+            if (eagle.IntersectsWith(tank)) return false;
+
+            return true;
+        }
+
+        private bool BulletCanMove(Point point)
+        {
+            Rectangle rect = currentMap.mainFrame;
+            if (point.X <= rect.Left || point.X >= rect.Right
+                || point.Y <= rect.Top || point.Y >= rect.Bottom) return false;
+
+            foreach (var s in currentMap.stone)
+            {
+                Rectangle stone = new Rectangle(s, new Size(currentMap.size, currentMap.size));
+                if (stone.Contains(point)) return false;
+            }
+
+            int index = 0;
+            foreach (var b in currentMap.brick)
+            {
+                Rectangle brick = new Rectangle(b, new Size(currentMap.size, currentMap.size));
+                if (brick.Contains(point))
+                {
+                    currentMap.brick.RemoveAt(index);
+                    return false;
+                }
+                index++;
+            }
+
+            Rectangle eagle = new Rectangle(currentMap.pointEagle, new Size(currentMap.size, currentMap.size));
+            if (eagle.Contains(point)) return false;
+
+            return true;
+        }
 
 
         private static void RotateImage(Tank tank, Direction newDirection) // поворачиваем картинку на нужный угол
