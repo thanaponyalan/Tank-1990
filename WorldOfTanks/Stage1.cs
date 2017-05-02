@@ -41,56 +41,64 @@ namespace WorldOfTanks
 
         private void InitializeBrick(int x, int y)
         {
-            brick.Add(new Point(x + size * 3, y + size));
-            brick.Add(new Point(x + size * 5, y + size));
-            brick.Add(new Point(x + size * 4, y + size));
-            brick.Add(new Point(x + size * 3, y + size * 2));
-            brick.Add(new Point(x + size * 5, y + size * 2));
-            brick.Add(new Point(x + size * 3, y + size * 3));
-            brick.Add(new Point(x + size * 5, y + size * 3));
-            brick.Add(new Point(x + size * 4, y + size * 3));
-            brick.Add(new Point(x + size * 3, y + size * 5));
-            brick.Add(new Point(x + size * 5, y + size * 5));
-            brick.Add(new Point(x + size * 4, y + size * 5));
-            brick.Add(new Point(x + size * 5, y + size * 4));
-            brick.Add(new Point(x + size * 7, y + size));
-            brick.Add(new Point(x + size * 8, y + size));
-            brick.Add(new Point(x + size * 9, y + size));
-            brick.Add(new Point(x + size * 7, y + size * 2));
-            brick.Add(new Point(x + size * 9, y + size * 2));
-            brick.Add(new Point(x + size * 7, y + size * 3));
-            brick.Add(new Point(x + size * 9, y + size * 3));
-            brick.Add(new Point(x + size * 7, y + size * 4));
-            brick.Add(new Point(x + size * 9, y + size * 4));
-            brick.Add(new Point(x + size * 7, y + size * 5));
-            brick.Add(new Point(x + size * 8, y + size * 5));
-            brick.Add(new Point(x + size * 9, y + size * 5));
-            brick.Add(new Point(x + size, y + size * 8));
-            brick.Add(new Point(x + size, y + size * 9));
-            brick.Add(new Point(x + size, y + size * 10));
-            brick.Add(new Point(x + size, y + size * 11));
-            brick.Add(new Point(x + size * 3, y + size * 8));
-            brick.Add(new Point(x + size * 3, y + size * 9));
-            brick.Add(new Point(x + size * 3, y + size * 10));
-            brick.Add(new Point(x + size * 3, y + size * 11));
-            brick.Add(new Point(x + size * 9, y + size * 8));
-            brick.Add(new Point(x + size * 9, y + size * 9));
-            brick.Add(new Point(x + size * 9, y + size * 10));
-            brick.Add(new Point(x + size * 9, y + size * 11));
-            brick.Add(new Point(x + size * 11, y + size * 8));
-            brick.Add(new Point(x + size * 11, y + size * 9));
-            brick.Add(new Point(x + size * 11, y + size * 10));
-            brick.Add(new Point(x + size * 11, y + size * 11));
-            brick.Add(new Point(x + size * 5, y + size * 12));
-            brick.Add(new Point(x + size * 5, y + size * 11));
-            brick.Add(new Point(x + size * 6, y + size * 11));
-            brick.Add(new Point(x + size * 7, y + size * 11));
-            brick.Add(new Point(x + size * 7, y + size * 12));
-            brick.Add(new Point(x + size * 7, y + size * 7));
-            brick.Add(new Point(x + size * 5, y + size * 7));
-            brick.Add(new Point(x + size * 7, y + size * 9));
-            brick.Add(new Point(x + size * 6, y + size * 9));
-            brick.Add(new Point(x + size * 5, y + size * 9));
+            AddSquareOfBricks(new Point(x + size * 3, y + size));
+            AddSquareOfBricks(new Point(x + size * 5, y + size));
+            AddSquareOfBricks(new Point(x + size * 4, y + size));
+            AddSquareOfBricks(new Point(x + size * 3, y + size * 2));
+            AddSquareOfBricks(new Point(x + size * 5, y + size * 2));
+            AddSquareOfBricks(new Point(x + size * 3, y + size * 3));
+            AddSquareOfBricks(new Point(x + size * 5, y + size * 3));
+            AddSquareOfBricks(new Point(x + size * 4, y + size * 3));
+            AddSquareOfBricks(new Point(x + size * 3, y + size * 5));
+            AddSquareOfBricks(new Point(x + size * 5, y + size * 5));
+            AddSquareOfBricks(new Point(x + size * 4, y + size * 5));
+            AddSquareOfBricks(new Point(x + size * 5, y + size * 4));
+            AddSquareOfBricks(new Point(x + size * 7, y + size));
+            AddSquareOfBricks(new Point(x + size * 8, y + size));
+            AddSquareOfBricks(new Point(x + size * 9, y + size));
+            AddSquareOfBricks(new Point(x + size * 7, y + size * 2));
+            AddSquareOfBricks(new Point(x + size * 9, y + size * 2));
+            AddSquareOfBricks(new Point(x + size * 7, y + size * 3));
+            AddSquareOfBricks(new Point(x + size * 9, y + size * 3));
+            AddSquareOfBricks(new Point(x + size * 7, y + size * 4));
+            AddSquareOfBricks(new Point(x + size * 9, y + size * 4));
+            AddSquareOfBricks(new Point(x + size * 7, y + size * 5));
+            AddSquareOfBricks(new Point(x + size * 8, y + size * 5));
+            AddSquareOfBricks(new Point(x + size * 9, y + size * 5));
+            AddSquareOfBricks(new Point(x + size, y + size * 8));
+            AddSquareOfBricks(new Point(x + size, y + size * 9));
+            AddSquareOfBricks(new Point(x + size, y + size * 10));
+            AddSquareOfBricks(new Point(x + size, y + size * 11));
+            AddSquareOfBricks(new Point(x + size * 3, y + size * 8));
+            AddSquareOfBricks(new Point(x + size * 3, y + size * 9));
+            AddSquareOfBricks(new Point(x + size * 3, y + size * 10));
+            AddSquareOfBricks(new Point(x + size * 3, y + size * 11));
+            AddSquareOfBricks(new Point(x + size * 9, y + size * 8));
+            AddSquareOfBricks(new Point(x + size * 9, y + size * 9));
+            AddSquareOfBricks(new Point(x + size * 9, y + size * 10));
+            AddSquareOfBricks(new Point(x + size * 9, y + size * 11));
+            AddSquareOfBricks(new Point(x + size * 11, y + size * 8));
+            AddSquareOfBricks(new Point(x + size * 11, y + size * 9));
+            AddSquareOfBricks(new Point(x + size * 11, y + size * 10));
+            AddSquareOfBricks(new Point(x + size * 11, y + size * 11));
+            AddSquareOfBricks(new Point(x + size * 5, y + size * 12));
+            AddSquareOfBricks(new Point(x + size * 5, y + size * 11));
+            AddSquareOfBricks(new Point(x + size * 6, y + size * 11));
+            AddSquareOfBricks(new Point(x + size * 7, y + size * 11));
+            AddSquareOfBricks(new Point(x + size * 7, y + size * 12));
+            AddSquareOfBricks(new Point(x + size * 7, y + size * 7));
+            AddSquareOfBricks(new Point(x + size * 5, y + size * 7));
+            AddSquareOfBricks(new Point(x + size * 7, y + size * 9));
+            AddSquareOfBricks(new Point(x + size * 6, y + size * 9));
+            AddSquareOfBricks(new Point(x + size * 5, y + size * 9));
+        }
+
+        private void AddSquareOfBricks(Point point)
+        {
+            brick.Add(point);
+            brick.Add(new Point(point.X + size / 2, point.Y));
+            brick.Add(new Point(point.X, point.Y + size / 2));
+            brick.Add(new Point(point.X + size / 2, point.Y + size / 2));
         }
 
         private void InitializeStone(int x, int y)

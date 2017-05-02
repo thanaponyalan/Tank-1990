@@ -99,7 +99,7 @@ namespace WorldOfTanks
 
             foreach (var b in currentMap.brick)
             {
-                Rectangle rect = new Rectangle(b, new Size(currentMap.size, currentMap.size));
+                Rectangle rect = new Rectangle(b, new Size(currentMap.size / 2, currentMap.size / 2));
                 if (rect.IntersectsWith(tank)) return false;
             }
 
@@ -121,22 +121,29 @@ namespace WorldOfTanks
                 if (stone.Contains(point)) return false;
             }
 
+            List<int> indexes = new List<int>();
             int index = 0;
+            bool result = true;
+            // для расчистки прохода под размер танка
+            Rectangle bullet = new Rectangle(new Point(point.X - 10, point.Y - 10), new Size(30, 30));
             foreach (var b in currentMap.brick)
             {
-                Rectangle brick = new Rectangle(b, new Size(currentMap.size, currentMap.size));
-                if (brick.Contains(point))
+                Rectangle brick = new Rectangle(b, new Size(currentMap.size / 2, currentMap.size / 2));
+                if (brick.IntersectsWith(bullet))
                 {
-                    currentMap.brick.RemoveAt(index);
-                    return false;
+                    indexes.Add(index);
+                    result = false;
                 }
                 index++;
             }
 
+            int coef = 0;
+            foreach (var i in indexes) { this.currentMap.brick.RemoveAt(i - coef); coef++; }
+
             Rectangle eagle = new Rectangle(currentMap.pointEagle, new Size(currentMap.size, currentMap.size));
             if (eagle.Contains(point)) return false;
 
-            return true;
+            return result;
         }
 
 

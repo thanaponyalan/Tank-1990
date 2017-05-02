@@ -19,7 +19,7 @@ namespace WorldOfTanks
         public List<Point> brick = new List<Point>(); // пробиваемая текстура
         public List<Point> stone = new List<Point>(); // непробиваемая текстура
         public Bitmap imgStone = new Bitmap(Image.FromFile("../../stone.png"), new Size(60, 60));
-        public Bitmap imgBrick = new Bitmap(Image.FromFile("../../brick.jpg"), new Size(60, 60));
+        public Bitmap imgBrick = new Bitmap(Image.FromFile("../../brick.jpg"), new Size(30, 30));
 
         public Map(Tank player)
         { 
