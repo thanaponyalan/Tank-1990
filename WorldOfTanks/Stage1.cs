@@ -16,6 +16,13 @@ namespace WorldOfTanks
         {
             int x = mainFrame.X;
             int y = mainFrame.Y;
+            startPositionForBots = new List<Point>();
+            startPositionForBots.Add(new Point(x + size / 2, y + size / 2));
+            startPositionForBots.Add(new Point(x + size * 12, y + size / 2));
+            startPositionForBots.Add(new Point(x + size * 2, y + size * 3));
+            startPositionForBots.Add(new Point(x + size * 11, y + size * 3));
+            startPositionForBots.Add(new Point(x + size * 2, y + size * 7));
+            startPositionForBots.Add(new Point(x + size * 10, y + size * 7));
             InitializeStone(x, y);
             InitializeBrick(x, y);
             InitializeForest(x, y);

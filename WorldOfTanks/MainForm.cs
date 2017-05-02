@@ -29,6 +29,7 @@ namespace WorldOfTanks
         private Timer updateViewTimer = new Timer();
         private Timer bulletsTimer = new Timer();
         private Timer shootTimer = new Timer();
+        private Timer shootTimerForBots = new Timer();
 
         public MainForm()
         {
@@ -38,12 +39,23 @@ namespace WorldOfTanks
             updateViewTimer.Tick += UpdateViewTimer_Tick;
             updateViewTimer.Start();
             bulletsTimer.Interval = 1; // fps
-            bulletsTimer.Tick += BulletsTimer_Tick; 
+            bulletsTimer.Tick += BulletsTimer_Tick;
             bulletsTimer.Start();
             shootTimer.Interval = 150;
             shootTimer.Tick += ShootTimer_Tick;
             shootTimer.Start();
-    }
+            shootTimerForBots.Interval = 3000;
+            shootTimerForBots.Tick += ShootTimerForBots_Tick;
+            shootTimerForBots.Start();
+        }
+
+        private void ShootTimerForBots_Tick(object sender, EventArgs e)
+        {
+            foreach (var bot in game.bots)
+            {
+                game.Shoot(bot);
+            }
+        }
 
         private void ShootTimer_Tick(object sender, EventArgs e)
         {
@@ -61,7 +73,7 @@ namespace WorldOfTanks
             else if (right) game.Move(game.player, Direction.East);
             else if (up) game.Move(game.player, Direction.North);
             else if (down) game.Move(game.player, Direction.South);
-           
+
             Invalidate();
             Update();
         }
@@ -71,6 +83,12 @@ namespace WorldOfTanks
             e.Graphics.Clear(Color.Gray);
             e.Graphics.FillRectangle(new SolidBrush(Color.Black), game.currentMap.mainFrame); // отрисовка основной рамки
             e.Graphics.DrawImage(game.player.img, new Point(game.player.point.X, game.player.point.Y)); // отрисовка танка
+
+            foreach (var t in game.bots)
+            {
+                e.Graphics.DrawImage(t.img, new Point(t.point.X, t.point.Y)); // отрисовка ботов
+            }
+
             e.Graphics.DrawImage(game.currentMap.eagle, game.currentMap.pointEagle); // отрисовка орла
 
             foreach (var s in game.currentMap.stone)
@@ -78,7 +96,7 @@ namespace WorldOfTanks
                 e.Graphics.DrawImage(game.currentMap.imgStone, s);
             }
 
-            foreach (var f in game.currentMap.forest) 
+            foreach (var f in game.currentMap.forest)
             {
                 e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(110, 0, 255, 111)), new Rectangle(f, new Size(60, 60)));
             }

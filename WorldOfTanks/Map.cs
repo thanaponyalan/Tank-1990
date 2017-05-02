@@ -13,6 +13,7 @@ namespace WorldOfTanks
         public int size = 60; // размер текстур
         public Rectangle mainFrame; // основная рамка игрового поля
         public Point startPosition; // стартовая позиция танка пользователя
+        public List<Point> startPositionForBots; // стартовые позиции для ботов
         public Bitmap eagle = new Bitmap(Image.FromFile("../../eagle.png"), new Size(60, 60));
         public Point pointEagle;
         public List<Point> forest = new List<Point>(); // зеленый квадрат
