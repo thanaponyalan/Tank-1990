@@ -33,7 +33,7 @@ namespace WorldOfTanks
         public Dictionary<int, Direction> directionForBot = new Dictionary<int, Direction>();
         private CreateBotDelegate[] createBot = new CreateBotDelegate[3];
 
-        public GameModel()
+        public GameModel(Map map)
         {
             directionForBot.Add(0, Direction.East);
             directionForBot.Add(1, Direction.North);
@@ -42,7 +42,7 @@ namespace WorldOfTanks
             createBot[0] = new CreateBotDelegate(CreateEasyBot);
             createBot[1] = new CreateBotDelegate(CreateMediumBot);
             createBot[2] = new CreateBotDelegate(CreateHardBot);
-            currentMap = new Stage1(player);
+            currentMap = map;
             playerStartPosition = currentMap.startPosition;
 
             for (int i = 0; i < currentBotAmount; ++i)
@@ -208,8 +208,8 @@ namespace WorldOfTanks
         {
             Rectangle tank = new Rectangle(a_tank.point, new Size(a_tank.size, a_tank.size));
 
-            if (tank.Left < currentMap.mainFrame.Left || tank.Right > currentMap.mainFrame.Right
-                || tank.Top < currentMap.mainFrame.Top || tank.Bottom > currentMap.mainFrame.Bottom)
+            if (tank.Left < Map.mainFrame.Left || tank.Right > Map.mainFrame.Right
+                || tank.Top < Map.mainFrame.Top || tank.Bottom > Map.mainFrame.Bottom)
             {
                 return false;
             }
@@ -278,7 +278,7 @@ namespace WorldOfTanks
         {
             Rectangle rect;
 
-            rect = currentMap.mainFrame;
+            rect = Map.mainFrame;
             if (bullet.middle.X <= rect.Left || bullet.middle.X >= rect.Right
                 || bullet.middle.Y <= rect.Top || bullet.middle.Y >= rect.Bottom) return false;
 
@@ -300,7 +300,15 @@ namespace WorldOfTanks
             }
 
 
-            if(bullet.tank is Bot) // попадание в игрока
+            rect = new Rectangle(currentMap.pointEagle, new Size(currentMap.size, currentMap.size));
+            if ((rect.IntersectsWith(new Rectangle(bullet.point, new Size(bullet.size, bullet.size))) && bullet.tank is PlayerTank))
+            {
+                if (!playerWin) gameOver = true;
+                currentMap.eagle = new Bitmap(Image.FromFile("../../deadEagle.png"), new Size(currentMap.size, currentMap.size));
+                return false;
+            }
+
+                if (bullet.tank is Bot) // попадание в игрока
             {
                 rect = new Rectangle(player.point, new Size(player.size, player.size));
 
