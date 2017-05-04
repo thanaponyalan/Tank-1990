@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace WorldOfTanks
 {
-    class HardBot : Tank
+    class HardBot : Bot
     {
+        public bool canMove = true;
+
         public HardBot(Point position)
         {
             point = position;

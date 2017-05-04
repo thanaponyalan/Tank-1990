@@ -8,38 +8,46 @@ using System.Windows.Forms;
 
 namespace WorldOfTanks
 {
+    public enum BotDifficulty
+    {
+        Easy,
+        Medium,
+        Hard
+    }
+
     public class GameModel
     {
-        enum Bot
-        {
-            Easy,
-            Medium,
-            Hard
-        }
-
         private delegate void CreateBotDelegate();
-
+        private int currentBotAmount = 4; // суммарное кол-во ботов на карте
+        private int simultaneousBotAmount = 6; // одновременное кол-во ботов на карте
+        private int maxBotAmount = 10; // максимальное суммарное кол-во ботов на карте
+        private int maxStepsInOneDirection = 80; // максимально кол-во шагов в одном направлении для бота
         public bool gameOver = false;
+        public bool playerWin = false;
         public Tank player = new PlayerTank();
         public List<Bullet> bullets = new List<Bullet>();
         public List<Tank> bots = new List<Tank>();
-        private Point startPosition;
+        private Point playerStartPosition; // стартовая позиция игрока
         public Map currentMap;
         private Random random = new Random();
+        public Dictionary<int, Direction> directionForBot = new Dictionary<int, Direction>();
+        private CreateBotDelegate[] createBot = new CreateBotDelegate[3];
 
         public GameModel()
         {
-            CreateBotDelegate[] createBot = new CreateBotDelegate[3];
+            directionForBot.Add(0, Direction.East);
+            directionForBot.Add(1, Direction.North);
+            directionForBot.Add(2, Direction.South);
+            directionForBot.Add(3, Direction.West);
             createBot[0] = new CreateBotDelegate(CreateEasyBot);
             createBot[1] = new CreateBotDelegate(CreateMediumBot);
             createBot[2] = new CreateBotDelegate(CreateHardBot);
             currentMap = new Stage1(player);
-            startPosition = currentMap.startPosition;
+            playerStartPosition = currentMap.startPosition;
 
-            for (int i = 0; i < 4; ++i)
+            for (int i = 0; i < currentBotAmount; ++i)
             {
-                int num = random.Next(0, 3);
-                createBot[num]();
+                AddBot();
             }
         }
 
@@ -49,7 +57,7 @@ namespace WorldOfTanks
             Point position;
             do
             {
-                num = random.Next(0, 6);
+                num = random.Next(0, currentMap.startPositionForBots.Count);
                 position = currentMap.startPositionForBots[num];
             } while (!IsEmptyPosition(position));
 
@@ -62,7 +70,7 @@ namespace WorldOfTanks
             Point position;
             do
             {
-                num = random.Next(0, 6);
+                num = random.Next(0, currentMap.startPositionForBots.Count);
                 position = currentMap.startPositionForBots[num];
             } while (!IsEmptyPosition(position));
 
@@ -75,7 +83,7 @@ namespace WorldOfTanks
             Point position;
             do
             {
-                num = random.Next(0, 6);
+                num = random.Next(0, currentMap.startPositionForBots.Count);
                 position = currentMap.startPositionForBots[num];
             } while (!IsEmptyPosition(position));
 
@@ -103,27 +111,69 @@ namespace WorldOfTanks
 
             if (tank.direction == direction)
             {
-                Point newPoint = new Point((tank.point.X + dX), (tank.point.Y + dY));
-                Rectangle rect = new Rectangle(newPoint, new Size(tank.size, tank.size));
+                Point previous = tank.point;
+                tank.point = new Point((tank.point.X + dX), (tank.point.Y + dY));
+               
 
-                if (TankCanMove(rect))
+                if (!TankCanMove(tank))
                 {
-                    tank.point = newPoint;
+                    if (!(tank is PlayerTank)) { ((Bot)(tank)).canMove = false; ((Bot)(tank)).countStep = 0; }
+                    tank.point = previous;
+                   
+                }
+
+                else
+                {
+                    if (!(tank is PlayerTank)) { ((Bot)(tank)).canMove = true; ((Bot)(tank)).countStep++; }
                 }
             }
 
             else
             {
+                if (!(tank is PlayerTank)) { ((Bot)(tank)).canMove = true; ((Bot)(tank)).countStep = 0; }
                 RotateImage(tank, direction); // поворачиваем картинку в нужном направлении
                 tank.direction = direction;
             }
         }
 
+        public void MoveBots(BotDifficulty difficulty) // перемещение ботов
+        {
+            foreach(var bot in bots)
+            {
+                if(difficulty == BotDifficulty.Easy && bot is EasyBot ||
+                    difficulty == BotDifficulty.Medium && bot is MediumBot ||
+                    difficulty == BotDifficulty.Hard && bot is HardBot)
+                {
+                    if (((Bot)bot).canMove && ((Bot)bot).countStep < maxStepsInOneDirection) Move(bot, ((Bot)bot).direction);
+
+                    else
+                    {
+                        int direction = random.Next(0, 4);
+                        Move(bot, directionForBot[direction]);
+                    }
+                }
+            }
+        }
+
+        public void AddBot() // добавление бота на карту
+        {
+            if (currentBotAmount == maxBotAmount && bots.Count == 0 && gameOver == false) playerWin = true;
+
+            else if(bots.Count < simultaneousBotAmount && currentBotAmount < maxBotAmount)
+            {
+                int num = random.Next(0, 3);
+                createBot[num]();
+                currentBotAmount++;
+            }
+            
+        }
+
         public void Shoot(Tank tank)
         {
+            if (tank is Bot && random.Next(0, 2) == 1) return;
+
             if (!tank.isShooting)
             {
-                Bullet bullet = new Bullet(tank);
                 bullets.Add(new Bullet(tank));
                 tank.isShooting = true;
             }
@@ -154,18 +204,26 @@ namespace WorldOfTanks
             }
         }
 
-        private bool TankCanMove(Rectangle tank) // проверяет, может ли танк двигаться в данном направлении
+        private bool TankCanMove(Tank a_tank) // проверяет, может ли танк двигаться в данном направлении
         {
+            Rectangle tank = new Rectangle(a_tank.point, new Size(a_tank.size, a_tank.size));
+
             if (tank.Left < currentMap.mainFrame.Left || tank.Right > currentMap.mainFrame.Right
                 || tank.Top < currentMap.mainFrame.Top || tank.Bottom > currentMap.mainFrame.Bottom)
             {
                 return false;
             }
 
+            if(a_tank is Bot)
+            {
+                Rectangle rect = new Rectangle(player.point, new Size(player.size, player.size));
+                if(rect.IntersectsWith(tank)) return false;
+            }
+
             foreach (var bot in bots)
             {
                 Rectangle rect = new Rectangle(bot.point, new Size(bot.size, bot.size));
-                if (rect.IntersectsWith(tank)) return false;
+                if (rect.IntersectsWith(tank) && bot != a_tank) return false;
             }
 
             foreach (var s in currentMap.stone)
@@ -186,7 +244,7 @@ namespace WorldOfTanks
             return true;
         }
 
-        private void DeleteCrossedBullets()
+        private void DeleteCrossedBullets() // удаление столкнувшихся пуль
         {
             List<Bullet> toDelete = new List<Bullet>();
 
@@ -227,11 +285,36 @@ namespace WorldOfTanks
             foreach (var s in currentMap.stone)
             {
                 rect = new Rectangle(s, new Size(currentMap.size, currentMap.size));
-                if (rect.Contains(bullet.middle)) return false;
+                if (rect.Contains(bullet.middle)) return false;   
             }
 
-            List<int> indexes = new List<int>();
-            int index = 0;
+            foreach(var bot in bots) // попадание в бота
+            {
+                rect = new Rectangle(bot.point, new Size(bot.size, bot.size));
+                if((rect.IntersectsWith(new Rectangle(bullet.point, new Size(bullet.size, bullet.size))) && bullet.tank is PlayerTank))
+                {
+                    bot.hitpoints--;
+                    if(bot.hitpoints == 0) bots.Remove(bot);
+                    return false;
+                }
+            }
+
+
+            if(bullet.tank is Bot) // попадание в игрока
+            {
+                rect = new Rectangle(player.point, new Size(player.size, player.size));
+
+                if (rect.Contains(bullet.middle))
+                {
+                    player.point = playerStartPosition;
+                    player.hitpoints--;
+
+                    if (player.hitpoints == 0 && playerWin == false) gameOver = true;
+                    return false;
+                }
+            }
+
+            List<Point> brickToDelete = new List<Point>();
             bool result = true;
             // для расчистки прохода под размер танка
             rect = new Rectangle(new Point(bullet.middle.X - 10, bullet.middle.Y - 10), new Size(21, 21));
@@ -240,14 +323,12 @@ namespace WorldOfTanks
                 Rectangle brick = new Rectangle(b, new Size(currentMap.size / 2, currentMap.size / 2));
                 if (brick.IntersectsWith(rect))
                 {
-                    indexes.Add(index);
+                    brickToDelete.Add(b);
                     result = false;
                 }
-                index++;
             }
 
-            int coef = 0;
-            foreach (var i in indexes) { this.currentMap.brick.RemoveAt(i - coef); coef++; }
+            foreach (var b in brickToDelete) { this.currentMap.brick.Remove(b); }
 
             rect = new Rectangle(currentMap.pointEagle, new Size(currentMap.size, currentMap.size));
             if (rect.Contains(bullet.middle)) return false;

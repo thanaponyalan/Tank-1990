@@ -30,6 +30,11 @@ namespace WorldOfTanks
         private Timer bulletsTimer = new Timer();
         private Timer shootTimer = new Timer();
         private Timer shootTimerForBots = new Timer();
+        private Timer moveTimerForEasyBots = new Timer();
+        private Timer moveTimerForMediumBots = new Timer();
+        private Timer moveTimerForHardBots = new Timer();
+        private Timer addBotTimer= new Timer();
+
 
         public MainForm()
         {
@@ -44,9 +49,41 @@ namespace WorldOfTanks
             shootTimer.Interval = 150;
             shootTimer.Tick += ShootTimer_Tick;
             shootTimer.Start();
-            shootTimerForBots.Interval = 3000;
+            shootTimerForBots.Interval = 500;
             shootTimerForBots.Tick += ShootTimerForBots_Tick;
             shootTimerForBots.Start();
+            moveTimerForEasyBots.Interval = 30;
+            moveTimerForEasyBots.Tick += MoveTimerForEasyBots_Tick;
+            moveTimerForEasyBots.Start();
+            moveTimerForMediumBots.Interval = 50;
+            moveTimerForMediumBots.Tick += MoveTimerForMediumBots_Tick;
+            moveTimerForMediumBots.Start();
+            moveTimerForHardBots.Interval = 70;
+            moveTimerForHardBots.Tick += MoveTimerForHardBots_Tick;
+            moveTimerForHardBots.Start();
+            addBotTimer.Interval = 2000;
+            addBotTimer.Tick += AddBotTimer_Tick;
+            addBotTimer.Start();
+        }
+
+        private void AddBotTimer_Tick(object sender, EventArgs e)
+        {
+            game.AddBot();           
+        }
+
+        private void MoveTimerForHardBots_Tick(object sender, EventArgs e)
+        {
+            game.MoveBots(BotDifficulty.Hard);
+        }
+
+        private void MoveTimerForMediumBots_Tick(object sender, EventArgs e)
+        {
+            game.MoveBots(BotDifficulty.Medium);
+        }
+
+        private void MoveTimerForEasyBots_Tick(object sender, EventArgs e)
+        {
+            game.MoveBots(BotDifficulty.Easy);
         }
 
         private void ShootTimerForBots_Tick(object sender, EventArgs e)
@@ -69,6 +106,7 @@ namespace WorldOfTanks
 
         private void UpdateViewTimer_Tick(object sender, EventArgs e)
         {
+
             if (left) game.Move(game.player, Direction.West);
             else if (right) game.Move(game.player, Direction.East);
             else if (up) game.Move(game.player, Direction.North);
@@ -80,6 +118,8 @@ namespace WorldOfTanks
 
         private void MainForm_Paint(object sender, PaintEventArgs e)
         {
+            if (game.gameOver || game.playerWin) Close();
+
             e.Graphics.Clear(Color.Gray);
             e.Graphics.FillRectangle(new SolidBrush(Color.Black), game.currentMap.mainFrame); // отрисовка основной рамки
             e.Graphics.DrawImage(game.player.img, new Point(game.player.point.X, game.player.point.Y)); // отрисовка танка
@@ -108,7 +148,8 @@ namespace WorldOfTanks
 
             foreach (var b in game.bullets) // отрисовка пуль
             {
-                e.Graphics.FillEllipse(new SolidBrush(Color.Aquamarine), new RectangleF(b.point, new Size(b.size, b.size)));
+                if(b.tank is PlayerTank)e.Graphics.FillEllipse(new SolidBrush(Color.Aquamarine), new RectangleF(b.point, new Size(b.size, b.size)));
+                else e.Graphics.FillEllipse(new SolidBrush(Color.Orange), new RectangleF(b.point, new Size(b.size, b.size)));
             }
         }
 

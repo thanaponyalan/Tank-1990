@@ -12,7 +12,7 @@ namespace WorldOfTanks
         public int size;
         public Direction direction; // направление движения танка
         public Dictionary<Direction, KeyValuePair<int, int>> shift; // смещение танка в зависимости от направления движения
-        protected int hitpoints; // кол-во жизней
+        public int hitpoints; // кол-во жизней
         public Point point; // координаты левого верхнего
         public Bitmap img; // картинка для танка
         public Dictionary<Direction, int> windRose = new Dictionary<Direction, int>(); // роза ветров
