@@ -50,7 +50,7 @@ namespace WorldOfTanks
         private Bitmap difficultyImage; // заставка
         private List<Map> maps = new List<Map>(); // список со всеми картами
         private int currentMap = 0;
-        private GameDifficulty currentDifficulty = GameDifficulty.Easy; // текущая сложность
+        private GameDifficulty currentDifficulty = GameDifficulty.Medium; // текущая сложность
 
 
         public MainForm()
@@ -79,10 +79,10 @@ namespace WorldOfTanks
             moveTimerForHardBots.Interval = 70;
             moveTimerForHardBots.Tick += MoveTimerForHardBots_Tick;
             moveTimerForHardBots.Start();
-            addBotTimer.Interval = 2000;
+            addBotTimer.Interval = 500;
             addBotTimer.Tick += AddBotTimer_Tick;
             addBotTimer.Start();
-            
+            maps.Add(new Stage1());
             menuItems.Add("Старт", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
             menuItems.Add("Сложность", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Старт"].Bottom + 20), new Size(190, 40)));
             menuItems.Add("Выход", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Сложность"].Bottom + 20), new Size(140, 40)));
@@ -234,7 +234,12 @@ namespace WorldOfTanks
         {
             if (menu)
             {
-                if (menuItems["Старт"].Contains(new Point(e.X, e.Y))) { }
+                if (menuItems["Старт"].Contains(new Point(e.X, e.Y)))
+                {
+                    menu = false;
+                    playStage = true;
+                    game = new GameModel(maps[currentMap], currentDifficulty);
+                }
                 else if (menuItems["Сложность"].Contains(new Point(e.X, e.Y)))
                 {
                     menu = false;
@@ -248,6 +253,7 @@ namespace WorldOfTanks
                 if (difficultyItems["Легко"].Contains(new Point(e.X, e.Y)))
                 {
                     currentDifficulty = GameDifficulty.Easy;
+                    SetTimersForEasyGame();
                     menu = true;
                     chooseDifficulty = false;
                 }
@@ -255,6 +261,7 @@ namespace WorldOfTanks
                 else if (difficultyItems["Средне"].Contains(new Point(e.X, e.Y)))
                 {
                     currentDifficulty = GameDifficulty.Medium;
+                    SetTimersForMediumGame();
                     menu = true;
                     chooseDifficulty = false;
                 }
@@ -262,10 +269,35 @@ namespace WorldOfTanks
                 else if (difficultyItems["Сложно"].Contains(new Point(e.X, e.Y)))
                 {
                     currentDifficulty = GameDifficulty.Hard;
+                    SetTimersForHardGame();
                     menu = true;
                     chooseDifficulty = false;
                 }
             }
+        }
+
+        private void SetTimersForEasyGame()
+        {
+            moveTimerForEasyBots.Interval = 45;
+            moveTimerForMediumBots.Interval = 60;
+            moveTimerForHardBots.Interval = 70;
+            shootTimerForBots.Interval = 500;
+        }
+
+        private void SetTimersForMediumGame()
+        {
+            moveTimerForEasyBots.Interval = 35;
+            moveTimerForMediumBots.Interval = 50;
+            moveTimerForHardBots.Interval = 70;
+            shootTimerForBots.Interval = 350;
+        }
+
+        private void SetTimersForHardGame()
+        {
+            moveTimerForEasyBots.Interval = 30;
+            moveTimerForMediumBots.Interval = 40;
+            moveTimerForHardBots.Interval = 60;
+            shootTimerForBots.Interval = 200;
         }
 
         private void AddBotTimer_Tick(object sender, EventArgs e)

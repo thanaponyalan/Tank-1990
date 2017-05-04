@@ -11,8 +11,8 @@ namespace WorldOfTanks
     {
 
 
-        public Stage1(Tank player)
-            : base(player)
+        public Stage1()
+            : base()
         {
             int x = mainFrame.X;
             int y = mainFrame.Y;
@@ -22,7 +22,9 @@ namespace WorldOfTanks
             startPositionForBots.Add(new Point(x + size * 2, y + size * 3));
             startPositionForBots.Add(new Point(x + size * 11, y + size * 3));
             startPositionForBots.Add(new Point(x + size * 2, y + size * 7));
-            startPositionForBots.Add(new Point(x + size * 10, y + size * 7));
+            startPositionForBots.Add(new Point(x + size * 11, y + size * 7));
+            startPositionForBots.Add(new Point(x + size * 6, y + size / 2));
+            startPositionForBots.Add(new Point(x + size * 6, y + size * 5));
             InitializeStone(x, y);
             InitializeBrick(x, y);
             InitializeForest(x, y);
@@ -103,9 +105,15 @@ namespace WorldOfTanks
         private void AddSquareOfBricks(Point point)
         {
             brick.Add(point);
-            brick.Add(new Point(point.X + size / 2, point.Y));
-            brick.Add(new Point(point.X, point.Y + size / 2));
-            brick.Add(new Point(point.X + size / 2, point.Y + size / 2));
+            brick.Add(new Point(point.X + size / 3, point.Y));
+            brick.Add(new Point(point.X + 2 * (size / 3), point.Y));
+            brick.Add(new Point(point.X, point.Y + size / 3));
+            brick.Add(new Point(point.X + size / 3, point.Y + size / 3));
+            brick.Add(new Point(point.X + 2 * (size / 3), point.Y + size / 3));
+
+            brick.Add(new Point(point.X, point.Y + 2 * (size / 3)));
+            brick.Add(new Point(point.X + size / 3, point.Y + 2*(size / 3)));
+            brick.Add(new Point(point.X + 2 * (size / 3), point.Y + 2 * (size / 3)));
         }
 
         private void InitializeStone(int x, int y)

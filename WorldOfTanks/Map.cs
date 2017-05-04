@@ -10,7 +10,7 @@ namespace WorldOfTanks
 {
     public abstract class Map
     {
-        public int size = 60; // размер текстур
+        static public int size = 60; // размер текстур
         static public Rectangle mainFrame; // основная рамка игрового поля
         public Point startPosition; // стартовая позиция танка пользователя
         public List<Point> startPositionForBots; // стартовые позиции для ботов
@@ -20,15 +20,18 @@ namespace WorldOfTanks
         public List<Point> brick = new List<Point>(); // пробиваемая текстура
         public List<Point> stone = new List<Point>(); // непробиваемая текстура
         public Bitmap imgStone = new Bitmap(Image.FromFile("../../stone.png"), new Size(60, 60));
-        public Bitmap imgBrick = new Bitmap(Image.FromFile("../../brick.jpg"), new Size(30, 30));
+        public Bitmap imgBrick = new Bitmap(Image.FromFile("../../brick.jpg"), new Size(20, 20));
 
-        public Map(Tank player)
-        { 
+        static Map()
+        {
             int x = (SystemInformation.VirtualScreen.Width - 13 * size) / 2;
             int y = (SystemInformation.VirtualScreen.Height - 13 * size) / 2;
             mainFrame = new Rectangle(new Point(x, y), new Size(size * 13, size * 13));
+        }
+
+        public Map()
+        { 
             startPosition = new Point(mainFrame.X + 4 * size, mainFrame.Y + 12 * size);
-            player.point = startPosition;
             pointEagle = new Point(mainFrame.X + 6 * size, mainFrame.Y + 12 * size);
         }
     }
