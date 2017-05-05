@@ -44,7 +44,7 @@ namespace WorldOfTanks
             createBot[1] = new CreateBotDelegate(CreateMediumBot);
             createBot[2] = new CreateBotDelegate(CreateHardBot);
             if (map is Stage1) currentMap = new Stage1();
-
+            else if (map is Stage2) currentMap = new Stage2();
             player.point = playerStartPosition = currentMap.startPosition;
         }
 
@@ -52,6 +52,7 @@ namespace WorldOfTanks
         {
             currentBotAmount = 0;
             if (newMap is Stage1) currentMap = new Stage1();
+            else if (newMap is Stage2) currentMap = new Stage2();
             gameOver = false;
             playerWin = false;
             player = new PlayerTank();

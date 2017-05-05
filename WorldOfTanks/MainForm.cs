@@ -97,6 +97,7 @@ namespace WorldOfTanks
             winOrLoseAnimationTimer.Interval = 30;
             winOrLoseAnimationTimer.Tick += WinOrLoseAnimationTimer_Tick;
             maps.Add(new Stage1());
+            maps.Add(new Stage2());
             game = new GameModel(maps[currentMap], currentDifficulty);
             menuItems.Add("Старт", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
             menuItems.Add("Сложность", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Старт"].Bottom + 20), new Size(190, 40)));
@@ -107,7 +108,7 @@ namespace WorldOfTanks
             stages.Add("Карта 1");
             stages.Add("Карта 2");
             stages.Add("Карта 3");
-            winOrLoseAnimation = winOrLoseCoordinates = new Point(Map.mainFrame.X + Map.mainFrame.Width / 2 - 50, Map.mainFrame.Y + 5);
+            winOrLoseAnimation = winOrLoseCoordinates = new Point(Map.mainFrame.X + Map.mainFrame.Width / 2 - 100, Map.mainFrame.Y + 5);
         }
 
         private void WinOrLoseAnimationTimer_Tick(object sender, EventArgs e)
@@ -123,16 +124,15 @@ namespace WorldOfTanks
 
             else
             {
-                if (gameOver) gameOver = false;
-                else if (mapWinner) mapWinner = false;
+                if (gameOver) { menu = true; }
                 playStage = false;
 
-                if (gameOver || currentMap == maps.Count - 1) menu = true;
-                else currentMap++; beforeStage = true;
+                if (currentMap == maps.Count - 1) { menu = true; currentMap = 0; }
+                else if(!gameOver) { currentMap++; beforeStage = true; beforeStageTimer.Start(); }
                 winOrLoseAnimationTimer.Stop();
                 countMiliseconds = 0;
                 winOrLoseAnimation = winOrLoseCoordinates;
-                game.playerWin = game.gameOver = false;
+                gameOver = mapWinner = game.playerWin = game.playerWin = game.gameOver = false;
                 StopMove();
                 shoot = false;
             }
@@ -227,11 +227,10 @@ namespace WorldOfTanks
                 }
             }
 
-
             if (gameOver || mapWinner)
             {
                 e.Graphics.DrawString(winOrLose, new Font(new Font(FontFamily.GenericSansSerif, 26.0F), FontStyle.Bold),
-                        new SolidBrush(Color.Aqua), winOrLoseAnimation);
+                        new SolidBrush(Color.DeepPink), winOrLoseAnimation);
             }
         }
 
@@ -400,21 +399,25 @@ namespace WorldOfTanks
 
         private void BulletsTimer_Tick(object sender, EventArgs e)
         {
-            if (game.gameOver)
-            {
-                gameOver = true;
-                winOrLose = "Вы проиграли!";
-                winOrLoseAnimationTimer.Start();
-            }
 
-            else if(game.playerWin)
+            if (playStage)
             {
-                mapWinner = true;
-                winOrLose = "С победой!";
-                winOrLoseAnimationTimer.Start();
-            }
+                if (game.gameOver)
+                {
+                    gameOver = true;
+                    winOrLose = "Вы проиграли!";
+                    winOrLoseAnimationTimer.Start();
+                }
 
-            if (playStage) game.MoveBullet();
+                else if (game.playerWin)
+                {
+                    mapWinner = true;
+                    winOrLose = "С победой!";
+                    winOrLoseAnimationTimer.Start();
+                }
+
+                game.MoveBullet();
+            }
         }
     }
 }
