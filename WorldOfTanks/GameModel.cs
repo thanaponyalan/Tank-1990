@@ -20,7 +20,8 @@ namespace WorldOfTanks
         private delegate void CreateBotDelegate();
         private int currentBotAmount; // суммарное кол-во ботов на карте
         private int simultaneousBotAmount; // одновременное кол-во ботов на карте
-        private int maxBotAmount; // максимальное суммарное кол-во ботов на карте
+        public int maxBotAmount; // максимальное суммарное кол-во ботов на карте
+        public int killedBots;
         private int maxStepsInOneDirection = 80; // максимально кол-во шагов в одном направлении для бота
         public bool gameOver = false;
         public bool playerWin = false;
@@ -43,21 +44,27 @@ namespace WorldOfTanks
             createBot[0] = new CreateBotDelegate(CreateEasyBot);
             createBot[1] = new CreateBotDelegate(CreateMediumBot);
             createBot[2] = new CreateBotDelegate(CreateHardBot);
-            if (map is Stage1) currentMap = new Stage1();
-            else if (map is Stage2) currentMap = new Stage2();
+            currentMap = CreateMap(map);
+
             player.point = playerStartPosition = currentMap.startPosition;
         }
 
-        public void ChangeMap(Map newMap)
+        public void ChangeMap(Map map)
         {
-            currentBotAmount = 0;
-            if (newMap is Stage1) currentMap = new Stage1();
-            else if (newMap is Stage2) currentMap = new Stage2();
+            killedBots = currentBotAmount = 0;
+            currentMap = CreateMap(map);
             gameOver = false;
             playerWin = false;
             player = new PlayerTank();
             player.point = playerStartPosition = currentMap.startPosition;
             for (int i = 0; i < currentBotAmount; ++i) { AddBot(); }
+        }
+
+        private Map CreateMap(Map map)
+        {
+            if (map is Stage1) return new Stage1();
+            else if (map is Stage2) return new Stage2();
+            else return new Stage3();
         }
 
         private void CreateEasyBot()
@@ -303,7 +310,11 @@ namespace WorldOfTanks
                 if ((rect.IntersectsWith(new Rectangle(bullet.point, new Size(bullet.size, bullet.size))) && bullet.tank is PlayerTank))
                 {
                     bot.hitpoints--;
-                    if (bot.hitpoints == 0) bots.Remove(bot);
+                    if (bot.hitpoints == 0)
+                    {
+                        bots.Remove(bot);
+                        if (killedBots < maxBotAmount) killedBots++;
+                    }
                     return false;
                 }
             }
@@ -324,7 +335,7 @@ namespace WorldOfTanks
                 if (rect.Contains(bullet.middle))
                 {
                     player.point = playerStartPosition;
-                    player.hitpoints--;
+                    if (player.hitpoints > -1) player.hitpoints--;
 
                     if (player.hitpoints == 0 && playerWin == false) gameOver = true;
                     return false;

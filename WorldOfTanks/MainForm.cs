@@ -54,6 +54,8 @@ namespace WorldOfTanks
         private Bitmap menuImage; // заставка
         private Bitmap difficultyImage; // заставка
         private List<Map> maps = new List<Map>(); // список со всеми картами
+        private Bitmap bots = new Bitmap(Image.FromFile("../../bots.png"), new Size(20, 20));
+        private Bitmap health = new Bitmap(Image.FromFile("../../health.png"), new Size(40, 40));
         private int currentMap = 0;
         private GameDifficulty currentDifficulty = GameDifficulty.Medium; // текущая сложность
         private List<string> stages = new List<string>(); // строки для заставки перед запуском карты
@@ -98,6 +100,7 @@ namespace WorldOfTanks
             winOrLoseAnimationTimer.Tick += WinOrLoseAnimationTimer_Tick;
             maps.Add(new Stage1());
             maps.Add(new Stage2());
+            maps.Add(new Stage3());
             game = new GameModel(maps[currentMap], currentDifficulty);
             menuItems.Add("Старт", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
             menuItems.Add("Сложность", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Старт"].Bottom + 20), new Size(190, 40)));
@@ -113,9 +116,9 @@ namespace WorldOfTanks
 
         private void WinOrLoseAnimationTimer_Tick(object sender, EventArgs e)
         {
-            if(countMiliseconds < 4000)
+            if (countMiliseconds < 4000)
             {
-                if(winOrLoseAnimation.Y  < Map.mainFrame.Y + Map.mainFrame.Height / 2)
+                if (winOrLoseAnimation.Y < Map.mainFrame.Y + Map.mainFrame.Height / 2)
                 {
                     winOrLoseAnimation = new Point(winOrLoseAnimation.X, winOrLoseAnimation.Y + 5);
                 }
@@ -127,8 +130,8 @@ namespace WorldOfTanks
                 if (gameOver) { menu = true; }
                 playStage = false;
 
-                if (currentMap == maps.Count - 1) { menu = true; currentMap = 0; }
-                else if(!gameOver) { currentMap++; beforeStage = true; beforeStageTimer.Start(); }
+                if (currentMap == maps.Count - 1 || gameOver) { menu = true; currentMap = 0; }
+                else if (!gameOver) { currentMap++; beforeStage = true; beforeStageTimer.Start(); }
                 winOrLoseAnimationTimer.Stop();
                 countMiliseconds = 0;
                 winOrLoseAnimation = winOrLoseCoordinates;
@@ -212,7 +215,7 @@ namespace WorldOfTanks
 
                 foreach (var f in game.currentMap.forest)
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(110, 0, 255, 111)), new Rectangle(f, new Size(60, 60)));
+                    e.Graphics.DrawImage(game.currentMap.imgForest, f);
                 }
 
                 foreach (var b in game.currentMap.brick)
@@ -225,6 +228,20 @@ namespace WorldOfTanks
                     if (b.tank is PlayerTank) e.Graphics.FillEllipse(new SolidBrush(Color.Aquamarine), new RectangleF(b.point, new Size(b.size, b.size)));
                     else e.Graphics.FillEllipse(new SolidBrush(Color.Orange), new RectangleF(b.point, new Size(b.size, b.size)));
                 }
+
+                Point point = new Point(Map.mainFrame.X + Map.mainFrame.Width + 10, Map.mainFrame.Y + 10);
+
+                for (int i = 1; i <= game.maxBotAmount - game.killedBots; ++i)
+                {
+                    e.Graphics.DrawImage(bots, point);
+                    if (i % 2 == 0) point = new Point(point.X - 20, point.Y + 20);
+                    else point = new Point(point.X + 20, point.Y);
+                }
+
+                point = new Point(Map.mainFrame.X + Map.mainFrame.Width + 20, Map.mainFrame.Y + Map.mainFrame.Height - 100);
+                e.Graphics.DrawImage(health, point);
+                e.Graphics.DrawString(game.player.hitpoints.ToString(), new Font(new Font(FontFamily.GenericSansSerif, 18.0F), FontStyle.Bold),
+                        new SolidBrush(Color.Red), new Point(point.X + 50, point.Y + 5));
             }
 
             if (gameOver || mapWinner)

@@ -15,7 +15,7 @@ namespace WorldOfTanks
             int x = mainFrame.X;
             int y = mainFrame.Y;
             startPositionForBots = new List<Point>();
-            startPositionForBots.Add(new Point(x + size / 2, y + size / 2));
+            startPositionForBots.Add(new Point(x + size / 2, y));
             startPositionForBots.Add(new Point(x + size * 2, y + size));
             startPositionForBots.Add(new Point(x + size * 2, y + size * 5));
             startPositionForBots.Add(new Point(x + size * 4, y + size * 4));
@@ -89,7 +89,6 @@ namespace WorldOfTanks
             AddSquareOfBricks(new Point(x + size * 7, y + 8 * size));
             AddSquareOfBricks(new Point(x + size * 11, y + 8 * size));
             AddSquareOfBricks(new Point(x + size, y + 9 * size));
-            AddSquareOfBricks(new Point(x + size * 3, y + 9 * size));
             AddSquareOfBricks(new Point(x + size * 5, y + 9 * size));
             AddSquareOfBricks(new Point(x + size * 6, y + 9 * size));
             AddSquareOfBricks(new Point(x + size * 7, y + 9 * size));

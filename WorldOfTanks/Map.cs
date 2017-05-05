@@ -21,6 +21,7 @@ namespace WorldOfTanks
         public List<Point> stone = new List<Point>(); // непробиваемая текстура
         public Bitmap imgStone = new Bitmap(Image.FromFile("../../stone.png"), new Size(60, 60));
         public Bitmap imgBrick = new Bitmap(Image.FromFile("../../brick.jpg"), new Size(20, 20));
+        public Bitmap imgForest = new Bitmap(Image.FromFile("../../forest.png"), new Size(60, 60));
 
         static Map()
         {
