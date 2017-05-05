@@ -33,24 +33,34 @@ namespace WorldOfTanks
         private bool down = false;
         private bool shoot = false;
         private bool playStage = false; // прохождение уровня
+        private bool beforeStage = false; // заставка перед картой
         private bool menu = true; // окно меню
         private bool chooseDifficulty = false; // выбор сложности игры
+        private bool gameOver = false;
+        private bool mapWinner = false;
         private Dictionary<string, Rectangle> menuItems = new Dictionary<string, Rectangle>(); // список пунктов меню и их координаты
         private Dictionary<string, Rectangle> difficultyItems = new Dictionary<string, Rectangle>(); // список пунктов меню и их координаты
         private GameModel game;
         private Timer updateViewTimer = new Timer(); // таймер для отрисовки
         private Timer bulletsTimer = new Timer(); // таймер для перемещения всех пуль
-        private Timer shootTimer = new Timer();
+        private Timer shootTimer = new Timer(); // таймер для отлавливания события нажатия на клавишу
         private Timer shootTimerForBots = new Timer(); // таймер для принятия решения стрелять/не стрелять ботам
         private Timer moveTimerForEasyBots = new Timer(); // таймер для перемещения легкого бота
         private Timer moveTimerForMediumBots = new Timer(); // таймер для перемещения среднего бота
         private Timer moveTimerForHardBots = new Timer(); // таймер для перемещения сложного бота
+        private Timer beforeStageTimer = new Timer(); // таймер на заставку перед картой
         private Timer addBotTimer = new Timer(); // таймер для добавления ботов на карту
+        private Timer winOrLoseAnimationTimer = new Timer(); // таймер для отрисовки строки "Gameover" или "You win"
         private Bitmap menuImage; // заставка
         private Bitmap difficultyImage; // заставка
         private List<Map> maps = new List<Map>(); // список со всеми картами
         private int currentMap = 0;
         private GameDifficulty currentDifficulty = GameDifficulty.Medium; // текущая сложность
+        private List<string> stages = new List<string>(); // строки для заставки перед запуском карты
+        private string winOrLose; // надпись "Gameover" или "You win"
+        private Point winOrLoseCoordinates; // координаты надписи "Gameover" или "You win"
+        private Point winOrLoseAnimation;
+        private int countMiliseconds = 0;
 
 
         public MainForm()
@@ -82,14 +92,58 @@ namespace WorldOfTanks
             addBotTimer.Interval = 500;
             addBotTimer.Tick += AddBotTimer_Tick;
             addBotTimer.Start();
+            beforeStageTimer.Interval = 3000;
+            beforeStageTimer.Tick += BeforeStageTimer_Tick;
+            winOrLoseAnimationTimer.Interval = 30;
+            winOrLoseAnimationTimer.Tick += WinOrLoseAnimationTimer_Tick;
             maps.Add(new Stage1());
+            game = new GameModel(maps[currentMap], currentDifficulty);
             menuItems.Add("Старт", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
             menuItems.Add("Сложность", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Старт"].Bottom + 20), new Size(190, 40)));
             menuItems.Add("Выход", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Сложность"].Bottom + 20), new Size(140, 40)));
             difficultyItems.Add("Легко", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
             difficultyItems.Add("Средне", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Легко"].Bottom + 20), new Size(140, 40)));
             difficultyItems.Add("Сложно", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Средне"].Bottom + 20), new Size(140, 40)));
+            stages.Add("Карта 1");
+            stages.Add("Карта 2");
+            stages.Add("Карта 3");
+            winOrLoseAnimation = winOrLoseCoordinates = new Point(Map.mainFrame.X + Map.mainFrame.Width / 2 - 50, Map.mainFrame.Y + 5);
+        }
 
+        private void WinOrLoseAnimationTimer_Tick(object sender, EventArgs e)
+        {
+            if(countMiliseconds < 4000)
+            {
+                if(winOrLoseAnimation.Y  < Map.mainFrame.Y + Map.mainFrame.Height / 2)
+                {
+                    winOrLoseAnimation = new Point(winOrLoseAnimation.X, winOrLoseAnimation.Y + 5);
+                }
+                countMiliseconds += 30;
+            }
+
+            else
+            {
+                if (gameOver) gameOver = false;
+                else if (mapWinner) mapWinner = false;
+                playStage = false;
+
+                if (gameOver || currentMap == maps.Count - 1) menu = true;
+                else currentMap++; beforeStage = true;
+                winOrLoseAnimationTimer.Stop();
+                countMiliseconds = 0;
+                winOrLoseAnimation = winOrLoseCoordinates;
+                game.playerWin = game.gameOver = false;
+                StopMove();
+                shoot = false;
+            }
+        }
+
+        private void BeforeStageTimer_Tick(object sender, EventArgs e)
+        {
+            beforeStage = false;
+            game.ChangeMap(maps[currentMap]);
+            playStage = true;
+            beforeStageTimer.Stop();
         }
 
         private void UpdateViewTimer_Tick(object sender, EventArgs e)
@@ -111,8 +165,12 @@ namespace WorldOfTanks
             e.Graphics.Clear(Color.Gray);
             e.Graphics.FillRectangle(new SolidBrush(Color.Black), Map.mainFrame); // отрисовка основной рамки
 
-            //if (game.gameOver || game.playerWin) Close();
-
+            if (beforeStage) // отрисовка заставки перед запуском карты
+            {
+                e.Graphics.FillRectangle(new SolidBrush(Color.Gray), Map.mainFrame);
+                e.Graphics.DrawString(stages[currentMap], new Font(new Font(FontFamily.GenericSansSerif, 24.0F), FontStyle.Bold),
+                        new SolidBrush(Color.Black), Map.mainFrame.X + Map.mainFrame.Width / 2 - 50, Map.mainFrame.Y + Map.mainFrame.Height / 2 - 10);
+            }
 
             if (menu) // отрисовка пунктов меню
             {
@@ -126,7 +184,7 @@ namespace WorldOfTanks
                 }
             }
 
-            else if (chooseDifficulty) // выбор сложности
+            if (chooseDifficulty) // выбор сложности
             {
                 e.Graphics.DrawImage(difficultyImage, new Point(Map.mainFrame.X, Map.mainFrame.Y));
                 foreach (var d in difficultyItems)
@@ -136,7 +194,7 @@ namespace WorldOfTanks
                 }
             }
 
-            else if (playStage) // отрисовка игрового процесса на карте
+            if (playStage) // отрисовка игрового процесса на карте
             {
                 e.Graphics.DrawImage(game.player.img, new Point(game.player.point.X, game.player.point.Y)); // отрисовка танка
 
@@ -169,6 +227,12 @@ namespace WorldOfTanks
                 }
             }
 
+
+            if (gameOver || mapWinner)
+            {
+                e.Graphics.DrawString(winOrLose, new Font(new Font(FontFamily.GenericSansSerif, 26.0F), FontStyle.Bold),
+                        new SolidBrush(Color.Aqua), winOrLoseAnimation);
+            }
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -237,7 +301,8 @@ namespace WorldOfTanks
                 if (menuItems["Старт"].Contains(new Point(e.X, e.Y)))
                 {
                     menu = false;
-                    playStage = true;
+                    beforeStage = true;
+                    beforeStageTimer.Start();
                     game = new GameModel(maps[currentMap], currentDifficulty);
                 }
                 else if (menuItems["Сложность"].Contains(new Point(e.X, e.Y)))
@@ -324,10 +389,7 @@ namespace WorldOfTanks
         {
             if (playStage)
             {
-                foreach (var bot in game.bots)
-                {
-                    game.Shoot(bot);
-                }
+                foreach (var bot in game.bots) { game.Shoot(bot); }
             }
         }
 
@@ -338,6 +400,20 @@ namespace WorldOfTanks
 
         private void BulletsTimer_Tick(object sender, EventArgs e)
         {
+            if (game.gameOver)
+            {
+                gameOver = true;
+                winOrLose = "Вы проиграли!";
+                winOrLoseAnimationTimer.Start();
+            }
+
+            else if(game.playerWin)
+            {
+                mapWinner = true;
+                winOrLose = "С победой!";
+                winOrLoseAnimationTimer.Start();
+            }
+
             if (playStage) game.MoveBullet();
         }
     }

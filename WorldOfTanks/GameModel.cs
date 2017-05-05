@@ -43,22 +43,21 @@ namespace WorldOfTanks
             createBot[0] = new CreateBotDelegate(CreateEasyBot);
             createBot[1] = new CreateBotDelegate(CreateMediumBot);
             createBot[2] = new CreateBotDelegate(CreateHardBot);
-            currentMap = map;
+            if (map is Stage1) currentMap = new Stage1();
+
             player.point = playerStartPosition = currentMap.startPosition;
         }
 
         public void ChangeMap(Map newMap)
         {
             currentBotAmount = 0;
-            currentMap = newMap;
+            if (newMap is Stage1) currentMap = new Stage1();
             gameOver = false;
             playerWin = false;
             player = new PlayerTank();
             player.point = playerStartPosition = currentMap.startPosition;
             for (int i = 0; i < currentBotAmount; ++i) { AddBot(); }
         }
-
-
 
         private void CreateEasyBot()
         {
