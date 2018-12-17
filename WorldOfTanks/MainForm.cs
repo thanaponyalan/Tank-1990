@@ -220,7 +220,7 @@ namespace WorldOfTanks
 
                 foreach (var m in menuItems)
                 {
-                    e.Graphics.DrawString(m.Key, new Font(new Font(FontFamily.GenericSansSerif, 24.0F), FontStyle.Bold),
+                    e.Graphics.DrawString(m.Key, new Font(new Font(FontFamily.GenericSansSerif, 20.0F), FontStyle.Bold),
                         new SolidBrush(Color.DarkOrange), m.Value);
                 }
             }
@@ -404,19 +404,19 @@ namespace WorldOfTanks
                     menuItems.Add("เริ่มต้น", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
 
                     //Difficult
-                    menuItems.Add("ระดับความยาก", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Start"].Bottom + 20), new Size(190, 40)));
+                    menuItems.Add("ระดับความยาก", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["เริ่มต้น"].Bottom + 20), new Size(190, 40)));
 
                     //Exit
-                    menuItems.Add("ออก", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Difficult"].Bottom + 20), new Size(140, 40)));
+                    menuItems.Add("ออก", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["ระดับความยาก"].Bottom + 20), new Size(140, 40)));
 
                     //Easy
                     difficultyItems.Add("ง่าย", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
 
                     //Normal
-                    difficultyItems.Add("ปานกลาง", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Easy"].Bottom + 20), new Size(140, 40)));
+                    difficultyItems.Add("ปานกลาง", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["ง่าย"].Bottom + 20), new Size(140, 40)));
 
                     //Hard
-                    difficultyItems.Add("ยาก", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Normal"].Bottom + 20), new Size(140, 40)));
+                    difficultyItems.Add("ยาก", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["ปานกลาง"].Bottom + 20), new Size(140, 40)));
 
                     //Stage 1
                     stages.Add("ด่าน 1");
@@ -502,46 +502,102 @@ namespace WorldOfTanks
 
                 else if (lang=="th")
                 {
-                    if (menuItems["Start"].Contains(new Point(e.X, e.Y)))
+                    if (menuItems["เริ่มต้น"].Contains(new Point(e.X, e.Y)))
                     {
                         menu = false;
                         beforeStage = true;
                         beforeStageTimer.Start();
                         game = new GameModel(maps[currentMap], currentDifficulty);
                     }
-                    else if (menuItems["Difficult"].Contains(new Point(e.X, e.Y)))
+                    else if (menuItems["ระดับความยาก"].Contains(new Point(e.X, e.Y)))
                     {
                         menu = false;
                         chooseDifficulty = true;
                     }
-                    else if (menuItems["Exit"].Contains(new Point(e.X, e.Y))) { Close(); }
+                    else if (menuItems["ออก"].Contains(new Point(e.X, e.Y))) { Close(); }
                 }
             }
 
             else if (chooseDifficulty)
             {
-                if (difficultyItems["Легко"].Contains(new Point(e.X, e.Y)))
-                {
-                    currentDifficulty = GameDifficulty.Easy;
-                    SetTimersForEasyGame();
-                    menu = true;
-                    chooseDifficulty = false;
+                if (lang=="rs") {
+                    if (difficultyItems["Легко"].Contains(new Point(e.X, e.Y)))
+                    {
+                        currentDifficulty = GameDifficulty.Easy;
+                        SetTimersForEasyGame();
+                        menu = true;
+                        chooseDifficulty = false;
+                    }
+
+                    else if (difficultyItems["Средне"].Contains(new Point(e.X, e.Y)))
+                    {
+                        currentDifficulty = GameDifficulty.Medium;
+                        SetTimersForMediumGame();
+                        menu = true;
+                        chooseDifficulty = false;
+                    }
+
+                    else if (difficultyItems["Сложно"].Contains(new Point(e.X, e.Y)))
+                    {
+                        currentDifficulty = GameDifficulty.Hard;
+                        SetTimersForHardGame();
+                        menu = true;
+                        chooseDifficulty = false;
+                    }
                 }
 
-                else if (difficultyItems["Средне"].Contains(new Point(e.X, e.Y)))
+                else if (lang=="en")
                 {
-                    currentDifficulty = GameDifficulty.Medium;
-                    SetTimersForMediumGame();
-                    menu = true;
-                    chooseDifficulty = false;
+                    if (difficultyItems["Easy"].Contains(new Point(e.X, e.Y)))
+                    {
+                        currentDifficulty = GameDifficulty.Easy;
+                        SetTimersForEasyGame();
+                        menu = true;
+                        chooseDifficulty = false;
+                    }
+
+                    else if (difficultyItems["Normal"].Contains(new Point(e.X, e.Y)))
+                    {
+                        currentDifficulty = GameDifficulty.Medium;
+                        SetTimersForMediumGame();
+                        menu = true;
+                        chooseDifficulty = false;
+                    }
+
+                    else if (difficultyItems["Hard"].Contains(new Point(e.X, e.Y)))
+                    {
+                        currentDifficulty = GameDifficulty.Hard;
+                        SetTimersForHardGame();
+                        menu = true;
+                        chooseDifficulty = false;
+                    }
                 }
 
-                else if (difficultyItems["Сложно"].Contains(new Point(e.X, e.Y)))
+                else if (lang=="th")
                 {
-                    currentDifficulty = GameDifficulty.Hard;
-                    SetTimersForHardGame();
-                    menu = true;
-                    chooseDifficulty = false;
+                    if (difficultyItems["ง่าย"].Contains(new Point(e.X, e.Y)))
+                    {
+                        currentDifficulty = GameDifficulty.Easy;
+                        SetTimersForEasyGame();
+                        menu = true;
+                        chooseDifficulty = false;
+                    }
+
+                    else if (difficultyItems["ปานกลาง"].Contains(new Point(e.X, e.Y)))
+                    {
+                        currentDifficulty = GameDifficulty.Medium;
+                        SetTimersForMediumGame();
+                        menu = true;
+                        chooseDifficulty = false;
+                    }
+
+                    else if (difficultyItems["ยาก"].Contains(new Point(e.X, e.Y)))
+                    {
+                        currentDifficulty = GameDifficulty.Hard;
+                        SetTimersForHardGame();
+                        menu = true;
+                        chooseDifficulty = false;
+                    }
                 }
             }
         }
