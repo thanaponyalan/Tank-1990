@@ -40,6 +40,8 @@ namespace WorldOfTanks
         private bool gameOver = false;
         private bool mapWinner = false;
         private string lang;
+        private string gameOverTxt;
+        private string gameWinnerTxt;
         private Dictionary<string, Rectangle> languageMenuItems = new Dictionary<string, Rectangle>();
         private Dictionary<string, Rectangle> menuItems = new Dictionary<string, Rectangle>(); // список пунктов меню и их координаты
         private Dictionary<string, Rectangle> difficultyItems = new Dictionary<string, Rectangle>(); // список пунктов меню и их координаты
@@ -109,34 +111,7 @@ namespace WorldOfTanks
             languageMenuItems.Add("English", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
             languageMenuItems.Add("ไทย", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, languageMenuItems["English"].Bottom + 20), new Size(190, 40)));
             languageMenuItems.Add("русский", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, languageMenuItems["ไทย"].Bottom + 20), new Size(190, 40)));
-            
-        /*    //Start
-            menuItems.Add("Старт", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
-            
-            //Difficult
-            menuItems.Add("Сложность", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Старт"].Bottom + 20), new Size(190, 40)));
-            
-            //Exit
-            menuItems.Add("Выход", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Сложность"].Bottom + 20), new Size(140, 40)));
-
-            //Easy
-            difficultyItems.Add("Легко", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
-
-            //Normal
-            difficultyItems.Add("Средне", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Легко"].Bottom + 20), new Size(140, 40)));
-
-            //Hard
-            difficultyItems.Add("Сложно", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Средне"].Bottom + 20), new Size(140, 40)));
-
-            //Stage 1
-            stages.Add("Карта 1");
-
-            //Stage 2
-            stages.Add("Карта 2");
-
-            //Stage 3
-            stages.Add("Карта 3");
-            */
+        
             winOrLoseAnimation = winOrLoseCoordinates = new Point(Map.mainFrame.X + Map.mainFrame.Width / 2 - 100, Map.mainFrame.Y + 5);
         }
 
@@ -367,6 +342,8 @@ namespace WorldOfTanks
                 if (languageMenuItems["English"].Contains(new Point(e.X,e.Y)))
                 {
                     lang = "en";
+                    gameOverTxt = "You Lose!";
+                    gameWinnerTxt = "You Win.";
                     //Start
                     menuItems.Add("Start", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
 
@@ -399,6 +376,8 @@ namespace WorldOfTanks
                 }
                 else if (languageMenuItems["ไทย"].Contains(new Point(e.X, e.Y)))
                 {
+                    gameOverTxt = "คุณแพ้";
+                    gameWinnerTxt = "คุณชนะ";
                     lang = "th";
                     //Start
                     menuItems.Add("เริ่มต้น", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
@@ -432,6 +411,8 @@ namespace WorldOfTanks
                 }
                 else if (languageMenuItems["русский"].Contains(new Point(e.X, e.Y)))
                 {
+                    gameOverTxt = "Вы проиграли!";
+                    gameWinnerTxt = "С победой!";
                     lang = "rs";
                     //Start
                     menuItems.Add("Старт", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
@@ -667,14 +648,14 @@ namespace WorldOfTanks
                 if (game.gameOver)
                 {
                     gameOver = true;
-                    winOrLose = "Вы проиграли!";
+                    winOrLose = gameOverTxt;
                     winOrLoseAnimationTimer.Start();
                 }
 
                 else if (game.playerWin)
                 {
                     mapWinner = true;
-                    winOrLose = "С победой!";
+                    winOrLose = gameWinnerTxt;
                     winOrLoseAnimationTimer.Start();
                 }
 
