@@ -34,10 +34,13 @@ namespace WorldOfTanks
         private bool shoot = false;
         private bool playStage = false; // прохождение уровня
         private bool beforeStage = false; // заставка перед картой
-        private bool menu = true; // окно меню
+        private bool languageMenu = true; // окно меню
+        private bool menu = false;
         private bool chooseDifficulty = false; // выбор сложности игры
         private bool gameOver = false;
         private bool mapWinner = false;
+        private string lang;
+        private Dictionary<string, Rectangle> languageMenuItems = new Dictionary<string, Rectangle>();
         private Dictionary<string, Rectangle> menuItems = new Dictionary<string, Rectangle>(); // список пунктов меню и их координаты
         private Dictionary<string, Rectangle> difficultyItems = new Dictionary<string, Rectangle>(); // список пунктов меню и их координаты
         private GameModel game;
@@ -102,15 +105,38 @@ namespace WorldOfTanks
             maps.Add(new Stage2());
             maps.Add(new Stage3());
             game = new GameModel(maps[currentMap], currentDifficulty);
+
+            languageMenuItems.Add("English", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
+            languageMenuItems.Add("ไทย", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, languageMenuItems["English"].Bottom + 20), new Size(190, 40)));
+            languageMenuItems.Add("русский", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, languageMenuItems["ไทย"].Bottom + 20), new Size(190, 40)));
+            
+        /*    //Start
             menuItems.Add("Старт", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
+            
+            //Difficult
             menuItems.Add("Сложность", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Старт"].Bottom + 20), new Size(190, 40)));
+            
+            //Exit
             menuItems.Add("Выход", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Сложность"].Bottom + 20), new Size(140, 40)));
+
+            //Easy
             difficultyItems.Add("Легко", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
+
+            //Normal
             difficultyItems.Add("Средне", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Легко"].Bottom + 20), new Size(140, 40)));
+
+            //Hard
             difficultyItems.Add("Сложно", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Средне"].Bottom + 20), new Size(140, 40)));
+
+            //Stage 1
             stages.Add("Карта 1");
+
+            //Stage 2
             stages.Add("Карта 2");
+
+            //Stage 3
             stages.Add("Карта 3");
+            */
             winOrLoseAnimation = winOrLoseCoordinates = new Point(Map.mainFrame.X + Map.mainFrame.Width / 2 - 100, Map.mainFrame.Y + 5);
         }
 
@@ -173,6 +199,18 @@ namespace WorldOfTanks
                 e.Graphics.FillRectangle(new SolidBrush(Color.Gray), Map.mainFrame);
                 e.Graphics.DrawString(stages[currentMap], new Font(new Font(FontFamily.GenericSansSerif, 24.0F), FontStyle.Bold),
                         new SolidBrush(Color.Black), Map.mainFrame.X + Map.mainFrame.Width / 2 - 50, Map.mainFrame.Y + Map.mainFrame.Height / 2 - 10);
+            }
+
+            if (languageMenu) // отрисовка пунктов меню
+            {
+
+                e.Graphics.DrawImage(menuImage, new Point(Map.mainFrame.X, Map.mainFrame.Y));
+
+                foreach (var m in languageMenuItems)
+                {
+                    e.Graphics.DrawString(m.Key, new Font(new Font(FontFamily.GenericSansSerif, 24.0F), FontStyle.Bold),
+                        new SolidBrush(Color.DarkOrange), m.Value);
+                }
             }
 
             if (menu) // отрисовка пунктов меню
@@ -259,7 +297,7 @@ namespace WorldOfTanks
                 if (e.KeyCode == Keys.Right) { StopMove(); right = true; }
                 if (e.KeyCode == Keys.Up) { StopMove(); up = true; }
                 if (e.KeyCode == Keys.Down) { StopMove(); down = true; }
-                if (e.KeyCode == Keys.Z || e.KeyCode == Keys.X) shoot = true;
+                if (e.KeyCode == Keys.Z || e.KeyCode == Keys.X || e.KeyCode == Keys.Space) shoot = true;
             }
         }
 
@@ -279,13 +317,25 @@ namespace WorldOfTanks
                 else if (e.KeyCode == Keys.Right) right = false;
                 else if (e.KeyCode == Keys.Up) up = false;
                 else if (e.KeyCode == Keys.Down) down = false;
-                if (e.KeyCode == Keys.Z || e.KeyCode == Keys.X) shoot = false;
+                if (e.KeyCode == Keys.Z || e.KeyCode == Keys.X || e.KeyCode == Keys.Space) shoot = false;
             }
         }
 
         private void MainForm_MouseMove(object sender, MouseEventArgs e)
         {
-            if (menu)
+            if (languageMenu)
+            {
+                foreach (var l in languageMenuItems)
+                {
+                    if (l.Value.Contains(new Point(e.X, e.Y)))
+                    {
+                        Cursor.Current = Cursors.Hand;
+                        break;
+                    }
+                }
+            }
+
+            else if (menu)
             {
                 foreach (var m in menuItems)
                 {
@@ -312,21 +362,160 @@ namespace WorldOfTanks
 
         private void MainForm_MouseClick(object sender, MouseEventArgs e)
         {
-            if (menu)
+            if (languageMenu)
             {
-                if (menuItems["Старт"].Contains(new Point(e.X, e.Y)))
+                if (languageMenuItems["English"].Contains(new Point(e.X,e.Y)))
                 {
-                    menu = false;
-                    beforeStage = true;
-                    beforeStageTimer.Start();
-                    game = new GameModel(maps[currentMap], currentDifficulty);
+                    lang = "en";
+                    //Start
+                    menuItems.Add("Start", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
+
+                    //Difficult
+                    menuItems.Add("Difficult", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Start"].Bottom + 20), new Size(190, 40)));
+
+                    //Exit
+                    menuItems.Add("Exit", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Difficult"].Bottom + 20), new Size(140, 40)));
+
+                    //Easy
+                    difficultyItems.Add("Easy", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
+
+                    //Normal
+                    difficultyItems.Add("Normal", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Easy"].Bottom + 20), new Size(140, 40)));
+
+                    //Hard
+                    difficultyItems.Add("Hard", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Normal"].Bottom + 20), new Size(140, 40)));
+
+                    //Stage 1
+                    stages.Add("Stage 1");
+
+                    //Stage 2
+                    stages.Add("Stage 2");
+
+                    //Stage 3
+                    stages.Add("Stage 3");
+
+                    languageMenu = false;
+                    menu = true;
                 }
-                else if (menuItems["Сложность"].Contains(new Point(e.X, e.Y)))
+                else if (languageMenuItems["ไทย"].Contains(new Point(e.X, e.Y)))
                 {
-                    menu = false;
-                    chooseDifficulty = true;
+                    lang = "th";
+                    //Start
+                    menuItems.Add("เริ่มต้น", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
+
+                    //Difficult
+                    menuItems.Add("ระดับความยาก", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Start"].Bottom + 20), new Size(190, 40)));
+
+                    //Exit
+                    menuItems.Add("ออก", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Difficult"].Bottom + 20), new Size(140, 40)));
+
+                    //Easy
+                    difficultyItems.Add("ง่าย", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
+
+                    //Normal
+                    difficultyItems.Add("ปานกลาง", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Easy"].Bottom + 20), new Size(140, 40)));
+
+                    //Hard
+                    difficultyItems.Add("ยาก", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Normal"].Bottom + 20), new Size(140, 40)));
+
+                    //Stage 1
+                    stages.Add("ด่าน 1");
+
+                    //Stage 2
+                    stages.Add("ด่าน 2");
+
+                    //Stage 3
+                    stages.Add("ด่าน 3");
+
+                    languageMenu = false;
+                    menu = true;
                 }
-                else if (menuItems["Выход"].Contains(new Point(e.X, e.Y))) { Close(); }
+                else if (languageMenuItems["русский"].Contains(new Point(e.X, e.Y)))
+                {
+                    lang = "rs";
+                    //Start
+                    menuItems.Add("Старт", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
+
+                    //Difficult
+                    menuItems.Add("Сложность", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Старт"].Bottom + 20), new Size(190, 40)));
+
+                    //Exit
+                    menuItems.Add("Выход", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, menuItems["Сложность"].Bottom + 20), new Size(140, 40)));
+
+                    //Easy
+                    difficultyItems.Add("Легко", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, Map.mainFrame.Y + (Map.mainFrame.Height - 160) / 2), new Size(140, 40)));
+
+                    //Normal
+                    difficultyItems.Add("Средне", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Легко"].Bottom + 20), new Size(140, 40)));
+
+                    //Hard
+                    difficultyItems.Add("Сложно", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, difficultyItems["Средне"].Bottom + 20), new Size(140, 40)));
+
+                    //Stage 1
+                    stages.Add("Карта 1");
+
+                    //Stage 2
+                    stages.Add("Карта 2");
+
+                    //Stage 3
+                    stages.Add("Карта 3");
+
+                    languageMenu = false;
+                    menu = true;
+                }
+            }
+
+            else if (menu)
+            {
+                if (lang=="rs") {
+                    if (menuItems["Старт"].Contains(new Point(e.X, e.Y)))
+                    {
+                        menu = false;
+                        beforeStage = true;
+                        beforeStageTimer.Start();
+                        game = new GameModel(maps[currentMap], currentDifficulty);
+                    }
+                    else if (menuItems["Сложность"].Contains(new Point(e.X, e.Y)))
+                    {
+                        menu = false;
+                        chooseDifficulty = true;
+                    }
+                    else if (menuItems["Выход"].Contains(new Point(e.X, e.Y))) { Close(); }
+                }
+
+                else if (lang=="en")
+                {
+                    if (menuItems["Start"].Contains(new Point(e.X, e.Y)))
+                    {
+                        menu = false;
+                        beforeStage = true;
+                        beforeStageTimer.Start();
+                        game = new GameModel(maps[currentMap], currentDifficulty);
+                    }
+                    else if (menuItems["Difficult"].Contains(new Point(e.X, e.Y)))
+                    {
+                        menu = false;
+                        chooseDifficulty = true;
+                    }
+                    else if (menuItems["Exit"].Contains(new Point(e.X, e.Y))) { Close(); }
+                }
+
+                else if (lang=="th")
+                {
+                    if (menuItems["Start"].Contains(new Point(e.X, e.Y)))
+                    {
+                        menu = false;
+                        beforeStage = true;
+                        beforeStageTimer.Start();
+                        game = new GameModel(maps[currentMap], currentDifficulty);
+                    }
+                    else if (menuItems["Difficult"].Contains(new Point(e.X, e.Y)))
+                    {
+                        menu = false;
+                        chooseDifficulty = true;
+                    }
+                    else if (menuItems["Exit"].Contains(new Point(e.X, e.Y))) { Close(); }
+                }
             }
 
             else if (chooseDifficulty)
