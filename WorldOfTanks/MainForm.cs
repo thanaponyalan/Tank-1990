@@ -69,7 +69,7 @@ namespace WorldOfTanks
         private Point winOrLoseCoordinates; // координаты надписи "Gameover" или "You win"
         private Point winOrLoseAnimation;
         private int countMiliseconds = 0;
-        SoundPlayer gameSound = new SoundPlayer("../../sound.wav");
+        SoundPlayer gameSound = new SoundPlayer("../../shortSound.wav");
         private Label gameName = new Label();
 
         public MainForm()
@@ -308,6 +308,7 @@ namespace WorldOfTanks
                 else if (e.KeyCode == Keys.Down) down = false;
                 if (e.KeyCode == Keys.Z || e.KeyCode == Keys.X || e.KeyCode == Keys.Space) shoot = false;
             }
+            if (e.KeyCode==Keys.Escape) Application.Exit();
         }
 
         private void MainForm_MouseMove(object sender, MouseEventArgs e)
