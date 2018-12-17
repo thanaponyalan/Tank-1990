@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Media;
 
 namespace WorldOfTanks
 {
@@ -68,11 +69,13 @@ namespace WorldOfTanks
         private Point winOrLoseCoordinates; // координаты надписи "Gameover" или "You win"
         private Point winOrLoseAnimation;
         private int countMiliseconds = 0;
-
+        SoundPlayer gameSound = new SoundPlayer("../../sound.wav");
+        private Label gameName = new Label();
 
         public MainForm()
         {
             InitializeComponent();
+            gameSound.PlayLooping();
             menuImage = new Bitmap(Image.FromFile("../../MenuImage.jpg"), new Size(Map.mainFrame.Width, Map.mainFrame.Height));
             difficultyImage = new Bitmap(Image.FromFile("../../Difficulty.jpg"), new Size(Map.mainFrame.Width, Map.mainFrame.Height));
             updateViewTimer.Interval = 30; // fps
@@ -113,6 +116,13 @@ namespace WorldOfTanks
             languageMenuItems.Add("русский", new Rectangle(new Point(Map.mainFrame.X + (Map.mainFrame.Width - 140) / 2, languageMenuItems["ไทย"].Bottom + 20), new Size(190, 40)));
         
             winOrLoseAnimation = winOrLoseCoordinates = new Point(Map.mainFrame.X + Map.mainFrame.Width / 2 - 100, Map.mainFrame.Y + 5);
+            gameName.Text = "TANK-1990";
+            gameName.Font = new Font(FontFamily.GenericSansSerif, 36.0F);
+            gameName.AutoSize = true;
+            int x = ((Screen.PrimaryScreen.WorkingArea.Width - gameName.Size.Width) / 2)-70;
+            int y= Screen.PrimaryScreen.WorkingArea.Top +  50;
+            gameName.Location=new Point(x,y);
+            this.Controls.Add(gameName);
         }
 
         private void WinOrLoseAnimationTimer_Tick(object sender, EventArgs e)
@@ -178,7 +188,6 @@ namespace WorldOfTanks
 
             if (languageMenu) // отрисовка пунктов меню
             {
-
                 e.Graphics.DrawImage(menuImage, new Point(Map.mainFrame.X, Map.mainFrame.Y));
 
                 foreach (var m in languageMenuItems)
@@ -190,6 +199,11 @@ namespace WorldOfTanks
 
             if (menu) // отрисовка пунктов меню
             {
+                moveTimerForMediumBots.Start();
+                moveTimerForEasyBots.Start();
+                moveTimerForHardBots.Start();
+                shootTimerForBots.Start();
+                shootTimer.Start();
 
                 e.Graphics.DrawImage(menuImage, new Point(Map.mainFrame.X, Map.mainFrame.Y));
 
@@ -650,6 +664,11 @@ namespace WorldOfTanks
                     gameOver = true;
                     winOrLose = gameOverTxt;
                     winOrLoseAnimationTimer.Start();
+                    moveTimerForMediumBots.Stop();
+                    moveTimerForEasyBots.Stop();
+                    moveTimerForHardBots.Stop();
+                    shootTimerForBots.Stop();
+                    shootTimer.Stop();
                 }
 
                 else if (game.playerWin)
